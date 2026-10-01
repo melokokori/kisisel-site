@@ -49,7 +49,7 @@ const scholarLinks = [
     </div>
   </Section>
 
-  <Section id="thesis" title={ui.thesis} lang={lang} filled={!!thesis.title[lang]}>
+  {thesis.title[lang] && (<Section id="thesis" title={ui.thesis} lang={lang} filled>
     <div class="card thesis">
       <span class="mono accent">{ui.thesisOngoing}</span>
       <h3>{thesis.title[lang]}</h3>
@@ -82,7 +82,7 @@ const scholarLinks = [
         )
       }
     </div>
-  </Section>
+  </Section>)}
 
   <Section id="publications" title={ui.publications} lang={lang} filled={sortedPubs.length > 0}>
     {

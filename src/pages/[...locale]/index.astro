@@ -23,6 +23,7 @@ const { thesis } = research;
   <section class="hero">
     {interests.length > 0 && <p class="mono accent">{interests.join(' / ')}</p>}
     <h1>{profile.name}</h1>
+    {profile.role[lang] && <p class="role">{profile.role[lang]}</p>}
     {profile.tagline[lang] && <p class="lead">{profile.tagline[lang]}</p>}
     <div class="actions">
       <a href={localePath(lang, '/projects')} class="btn btn-primary">{ui.nav.projects}</a>
@@ -106,6 +107,11 @@ const { thesis } = research;
     font-size: clamp(56px, 9vw, 120px);
     line-height: 0.95;
     letter-spacing: -0.04em;
+  }
+  .role {
+    margin-top: -8px;
+    font-size: 17px;
+    color: var(--mu);
   }
   .hero .lead {
     max-width: 36ch;

@@ -16,7 +16,32 @@ export type Publication = {
 
 export const research = {
   summary: empty() as L, // araştırma sayfasının giriş paragrafı
-  interests: [] as Interest[],
+  interests: [
+    {
+      title: { tr: 'Yapay zekâ ve veri bilimi', en: 'AI & data science' },
+      description: {
+        tr: 'Veriden anlam çıkaran ve öğrenen modeller: veri analizi, makine öğrenmesi ve bu modellerin gerçek problemlere uygulanması.',
+        en: 'Models that learn from data: data analysis, machine learning and applying these models to real problems.',
+      },
+      keywords: ['Machine learning', 'Python', 'R'],
+    },
+    {
+      title: { tr: 'Web geliştirme', en: 'Web development' },
+      description: {
+        tr: 'Kullanıcının gördüğü arayüzden onu besleyen sunucu tarafına kadar uçtan uca web uygulamaları.',
+        en: 'End-to-end web applications, from the interface users see to the server side that powers it.',
+      },
+      keywords: ['Frontend', 'Backend', 'API'],
+    },
+    {
+      title: { tr: 'Bilgisayar ağları', en: 'Computer networks' },
+      description: {
+        tr: 'Sistemlerin birbiriyle nasıl konuştuğu: ağ protokolleri, mimariler ve bunların güvenilir çalışması.',
+        en: 'How systems talk to each other: network protocols, architectures and making them reliable.',
+      },
+      keywords: ['Protocols', 'Network architecture', 'Linux'],
+    },
+  ] as Interest[],
   thesis: {
     title: empty() as L,
     advisor: '',
