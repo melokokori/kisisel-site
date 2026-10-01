@@ -1,0 +1,36 @@
+---
+import { render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { defaultLang, locales } from '../../../i18n';
+import { getProjects, formatDate } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of locales) {
+    for (const project of await getProjects(lang)) {
+      paths.push({
+        params: { locale: lang === defaultLang ? undefined : lang, slug: project.slug },
+        props: { lang, project },
+      });
+    }
+  }
+  return paths;
+}
+
+const { lang, project } = Astro.props;
+const { Content } = await render(project);
+const links = Object.entries(project.data.links).filter(([, href]) => href);
+---
+
+<Base lang={lang} title={project.data.title} description={project.data.summary}>
+  <article>
+    <h1>{project.data.title}</h1>
+    <p>{project.data.summary}</p>
+    <p>
+      <time datetime={project.data.date.toISOString()}>{formatDate(project.data.date, lang)}</time>
+      {project.data.role && <> · {project.data.role}</>}
+    </p>
+    {links.length > 0 && <ul>{links.map(([name, href]) => <li><a href={href}>{name}</a></li>)}</ul>}
+    <Content />
+  </article>
+</Base>

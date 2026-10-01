@@ -1,0 +1,47 @@
+---
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import { localeParams, t, type Lang } from '../../i18n';
+import { research, publications } from '../../data/research';
+
+export const getStaticPaths = localeParams;
+
+const { lang } = Astro.props as { lang: Lang };
+const ui = t(lang);
+const { thesis } = research;
+const sortedPubs = [...publications].sort((a, b) => b.year - a.year);
+---
+
+<Base lang={lang} title={ui.nav.research}>
+  <h1>{ui.nav.research}</h1>
+  {research.summary[lang] && <p>{research.summary[lang]}</p>}
+
+  <Section id="interests" title={ui.interests} lang={lang} filled={research.interests.length > 0}>
+    {research.interests.map((i) => (
+      <article>
+        <h3>{i.title[lang]}</h3>
+        <p>{i.description[lang]}</p>
+      </article>
+    ))}
+  </Section>
+
+  <Section id="thesis" title={ui.thesis} lang={lang} filled={!!thesis.title[lang]}>
+    <h3>{thesis.title[lang]}</h3>
+    {thesis.advisor && <p>{ui.advisor}: {thesis.advisor}</p>}
+    {thesis.status[lang] && <p>{thesis.status[lang]}</p>}
+    {thesis.abstract[lang] && <p>{thesis.abstract[lang]}</p>}
+  </Section>
+
+  <Section id="publications" title={ui.publications} lang={lang} filled={sortedPubs.length > 0}>
+    <ol reversed>
+      {sortedPubs.map((p) => (
+        <li>
+          {p.authors.join(', ')} ({p.year}). <cite>{p.title}</cite>. {p.venue}.
+          {p.doi && <a href={`https://doi.org/${p.doi}`}> DOI</a>}
+          {p.url && <a href={p.url}> Link</a>}
+          {p.pdf && <a href={p.pdf}> PDF</a>}
+        </li>
+      ))}
+    </ol>
+  </Section>
+</Base>

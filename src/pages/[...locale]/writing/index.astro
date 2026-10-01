@@ -1,0 +1,25 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Section from '../../../components/Section.astro';
+import { localeParams, localePath, t, type Lang } from '../../../i18n';
+import { getPosts, formatDate } from '../../../lib/content';
+
+export const getStaticPaths = localeParams;
+
+const { lang } = Astro.props as { lang: Lang };
+const ui = t(lang);
+const posts = await getPosts(lang);
+---
+
+<Base lang={lang} title={ui.nav.writing}>
+  <h1>{ui.nav.writing}</h1>
+  <Section id="posts" title={ui.nav.writing} lang={lang} filled={posts.length > 0}>
+    {posts.map((p) => (
+      <article>
+        <h3><a href={localePath(lang, `/writing/${p.slug}`)}>{p.data.title}</a></h3>
+        <p>{p.data.description}</p>
+        <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date, lang)}</time>
+      </article>
+    ))}
+  </Section>
+</Base>

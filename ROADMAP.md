@@ -9,13 +9,13 @@ Ziyaretçi 10 saniyede şunu anlamalı: *kim, ne üzerine çalışıyor, neyi ka
 | Konu | Karar | Neden |
 |---|---|---|
 | Framework | **Astro** (statik çıktı) | İçerik odaklı, sıfır JS varsayılan, Markdown/MDX içerik koleksiyonları, Lighthouse 100'e yakın |
-| İçerik | `src/content/` altında Markdown (projeler, yayınlar, yazılar) | Yeni proje/yazı eklemek = tek `.md` dosyası |
-| Dil | TR + EN (Astro i18n) | Akademik çevre ve yurtdışı başvuruları için EN şart |
+| İçerik | Projeler/yazılar `src/content/` altında Markdown; profil, araştırma, yayınlar, CV `src/data/*.ts` | Yeni proje/yazı eklemek = tek `.md` dosyası |
+| Dil | TR (`/`) + EN (`/en`), tek sayfa dosyasından | Akademik çevre ve yurtdışı başvuruları için EN şart |
 | Deploy | GitHub `main` → Vercel otomatik deploy; PR'lar → preview URL | Mevcut `kisisel-site` Vercel projesi kullanılacak |
 | Tasarım | Claude Design ile görsel yön keşfi → `frontend-design` skill ile koda dökme | Jenerik "AI şablonu" görüntüsünden kaçınmak |
 | Denetim | `web-design-guidelines` skill + Lighthouse | Erişilebilirlik, performans, UX hataları |
 
-Eski site (index/hakkimda/iletisim + chaos/sun/weather/theme efektleri) `legacy/` etiketiyle git geçmişinde kalır, yeni sitede kullanılmaz.
+Eski site (index/hakkimda/iletisim + chaos/sun/weather/theme efektleri, eski CV PDF'i) `legacy-v1` tag'inde kalır, yeni sitede kullanılmaz.
 
 ## Fazlar
 
@@ -24,7 +24,10 @@ Eski site (index/hakkimda/iletisim + chaos/sun/weather/theme efektleri) `legacy/
 - [x] Mevcut durum incelendi (statik HTML, Vercel + GitHub bağlı)
 
 ### Faz 1 — İçerik envanteri (en kritik faz)
-Site, içeriği kadar iyidir. Toplanacaklar:
+Site, içeriği kadar iyidir.
+- [x] Bölüm iskeleti ve veri şemaları kuruldu (Astro); tüm alanlar boş — doldurulacak yerler `CLAUDE.md` → Proje yapısı
+
+Toplanacaklar:
 - [ ] Tek cümlelik konumlandırma ("X alanında Y üzerine çalışan ...")
 - [ ] Araştırma ilgi alanları (3–4 başlık) + tez konusu / danışman
 - [ ] Projeler: her biri için problem → yaklaşım → sonuç → link (GitHub/demo/video)

@@ -1,0 +1,30 @@
+---
+import { render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { defaultLang, locales } from '../../../i18n';
+import { getPosts, formatDate } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of locales) {
+    for (const post of await getPosts(lang)) {
+      paths.push({
+        params: { locale: lang === defaultLang ? undefined : lang, slug: post.slug },
+        props: { lang, post },
+      });
+    }
+  }
+  return paths;
+}
+
+const { lang, post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Base lang={lang} title={post.data.title} description={post.data.description}>
+  <article>
+    <h1>{post.data.title}</h1>
+    <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, lang)}</time>
+    <Content />
+  </article>
+</Base>

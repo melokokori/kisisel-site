@@ -1,0 +1,25 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Section from '../../../components/Section.astro';
+import { localeParams, localePath, t, type Lang } from '../../../i18n';
+import { getProjects, formatDate } from '../../../lib/content';
+
+export const getStaticPaths = localeParams;
+
+const { lang } = Astro.props as { lang: Lang };
+const ui = t(lang);
+const projects = await getProjects(lang);
+---
+
+<Base lang={lang} title={ui.nav.projects}>
+  <h1>{ui.nav.projects}</h1>
+  <Section id="projects" title={ui.nav.projects} lang={lang} filled={projects.length > 0}>
+    {projects.map((p) => (
+      <article>
+        <h3><a href={localePath(lang, `/projects/${p.slug}`)}>{p.data.title}</a></h3>
+        <p>{p.data.summary}</p>
+        <p><time datetime={p.data.date.toISOString()}>{formatDate(p.data.date, lang)}</time> · {p.data.tags.join(', ')}</p>
+      </article>
+    ))}
+  </Section>
+</Base>

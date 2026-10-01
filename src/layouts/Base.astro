@@ -1,0 +1,68 @@
+---
+import { localePath, t, type Lang } from '../i18n';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+  title?: string;
+  description?: string;
+}
+
+const { lang, title, description = profile.tagline[lang] } = Astro.props;
+const ui = t(lang);
+const pageTitle = title ? `${title} — ${profile.name}` : profile.name;
+
+// Aynı sayfanın diğer dildeki karşılığı
+const path = Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/';
+const otherLang: Lang = lang === 'tr' ? 'en' : 'tr';
+const nav = [
+  { href: '/', label: ui.nav.home },
+  { href: '/research', label: ui.nav.research },
+  { href: '/projects', label: ui.nav.projects },
+  { href: '/writing', label: ui.nav.writing },
+  { href: '/cv', label: ui.nav.cv },
+];
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{pageTitle}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="alternate" hreflang="tr" href={localePath('tr', path)} />
+    <link rel="alternate" hreflang="en" href={localePath('en', path)} />
+  </head>
+  <body>
+    <header>
+      <a href={localePath(lang)} class="brand">{profile.name}</a>
+      <nav>
+        {nav.map((item) => <a href={localePath(lang, item.href)}>{item.label}</a>)}
+        <a href={localePath(otherLang, path)} hreflang={otherLang} lang={otherLang}>{ui.switchLang}</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>© {new Date().getFullYear()} {profile.name}</p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  /* Geçici, nötr stil — görsel tasarım Faz 2'de gelecek. */
+  body {
+    margin: 0 auto;
+    max-width: 48rem;
+    padding: 1.5rem 1rem;
+    font-family: system-ui, sans-serif;
+    line-height: 1.6;
+  }
+  header { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: baseline; }
+  nav { display: flex; flex-wrap: wrap; gap: 1rem; }
+  footer { margin-top: 4rem; opacity: 0.6; }
+  .empty { opacity: 0.55; font-style: italic; }
+</style>

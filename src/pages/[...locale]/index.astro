@@ -1,0 +1,69 @@
+---
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import { localeParams, localePath, t, type Lang } from '../../i18n';
+import { profile } from '../../data/profile';
+import { research } from '../../data/research';
+import { getProjects, getPosts, formatDate } from '../../lib/content';
+
+export const getStaticPaths = localeParams;
+
+const { lang } = Astro.props as { lang: Lang };
+const ui = t(lang);
+
+const featured = (await getProjects(lang)).filter((p) => p.data.featured).slice(0, 3);
+const recentPosts = (await getPosts(lang)).slice(0, 3);
+const contactLinks = [
+  { label: lang === 'tr' ? 'E-posta' : 'Email', href: profile.email && `mailto:${profile.email}` },
+  { label: 'GitHub', href: profile.links.github },
+  { label: 'LinkedIn', href: profile.links.linkedin },
+  { label: 'Google Scholar', href: profile.links.scholar },
+  { label: 'ORCID', href: profile.links.orcid },
+].filter((l) => l.href);
+---
+
+<Base lang={lang}>
+  <section id="hero">
+    {profile.photo && <img src={profile.photo} alt={profile.name} width="160" height="160" />}
+    <h1>{profile.name}</h1>
+    {profile.role[lang] && <p>{profile.role[lang]}</p>}
+    {profile.tagline[lang] && <p>{profile.tagline[lang]}</p>}
+  </section>
+
+  <Section id="about" title={ui.about} lang={lang} filled={!!profile.bio[lang]}>
+    <p>{profile.bio[lang]}</p>
+  </Section>
+
+  <Section id="interests" title={ui.interests} lang={lang} filled={research.interests.length > 0}>
+    <ul>{research.interests.map((i) => <li>{i.title[lang]}</li>)}</ul>
+    <a href={localePath(lang, '/research')}>{ui.nav.research} →</a>
+  </Section>
+
+  <Section id="featured" title={ui.featured} lang={lang} filled={featured.length > 0}>
+    <ul>
+      {featured.map((p) => (
+        <li>
+          <a href={localePath(lang, `/projects/${p.slug}`)}>{p.data.title}</a>
+          <p>{p.data.summary}</p>
+        </li>
+      ))}
+    </ul>
+    <a href={localePath(lang, '/projects')}>{ui.allProjects} →</a>
+  </Section>
+
+  <Section id="writing" title={ui.recentPosts} lang={lang} filled={recentPosts.length > 0}>
+    <ul>
+      {recentPosts.map((p) => (
+        <li>
+          <a href={localePath(lang, `/writing/${p.slug}`)}>{p.data.title}</a>
+          <time datetime={p.data.date.toISOString()}> — {formatDate(p.data.date, lang)}</time>
+        </li>
+      ))}
+    </ul>
+    <a href={localePath(lang, '/writing')}>{ui.allPosts} →</a>
+  </Section>
+
+  <Section id="contact" title={ui.contact} lang={lang} filled={contactLinks.length > 0}>
+    <ul>{contactLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+  </Section>
+</Base>
