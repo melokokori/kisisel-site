@@ -39,8 +39,9 @@ export const profile = {
   } as L,
   location: empty() as L,
   email: '7melihturgut@gmail.com',
-  cvUpdated: '', // ör. '2026-10'
-  cv: empty() as L, // public/ altındaki PDF yolları, ör. { tr: '/cv/melih-turgut-tr.pdf', en: '/cv/melih-turgut-en.pdf' }
+  cvUpdated: '2026-10', // YYYY-MM; CV'yi `npm run cv:pdf` ile yeniden ürettiğinde güncelle
+  // `npm run cv:pdf` ile /cv sayfasından üretilir
+  cv: { tr: '/cv/melih-turgut-cv-tr.pdf', en: '/cv/melih-turgut-cv-en.pdf' } as L,
   links: {
     github: 'https://github.com/melokokori',
     linkedin: 'https://www.linkedin.com/in/melihturgut1/',

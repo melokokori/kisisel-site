@@ -2,7 +2,7 @@ import type { L } from '../i18n';
 
 export type Education = {
   degree: L; // ör. "Bilgisayar Mühendisliği Yüksek Lisans"
-  institution: string;
+  institution: L;
   location: string;
   start: string; // 'YYYY' veya 'YYYY-MM'
   end?: string; // boşsa "devam ediyor"
@@ -26,13 +26,13 @@ export type Award = { title: L; issuer: string; year: string; url?: string };
 export const education: Education[] = [
   {
     degree: { tr: 'Bilgisayar Mühendisliği, Yüksek Lisans', en: 'M.Sc. in Computer Engineering' },
-    institution: 'Üsküdar Üniversitesi',
+    institution: { tr: 'Üsküdar Üniversitesi', en: 'Üsküdar University' },
     location: 'İstanbul',
     start: '2025',
   },
   {
     degree: { tr: 'Adli Bilimler, Lisans', en: 'B.Sc. in Forensic Science' },
-    institution: 'Üsküdar Üniversitesi',
+    institution: { tr: 'Üsküdar Üniversitesi', en: 'Üsküdar University' },
     location: 'İstanbul',
     start: '2019',
     end: '2023',
@@ -83,7 +83,7 @@ export const experience: Experience[] = [
 ];
 
 export const skills: SkillGroup[] = [
-  { group: { tr: 'Programlama dilleri', en: 'Languages' }, items: ['Python', 'R', 'Java', 'JavaScript', 'SQL'] },
+  { group: { tr: 'Programlama dilleri', en: 'Programming languages' }, items: ['Python', 'R', 'Java', 'JavaScript', 'SQL'] },
   {
     group: { tr: 'Veri ve yapay zekâ', en: 'Data & AI' },
     items: ['pandas', 'NumPy', 'scikit-learn', 'PyTorch', 'TensorFlow'],

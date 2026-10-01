@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "check": "astro check",
+    "cv:pdf": "node scripts/cv-pdf.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },

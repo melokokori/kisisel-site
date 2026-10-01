@@ -6,6 +6,7 @@ import { localeParams, t, type Lang } from '../../i18n';
 import { profile } from '../../data/profile';
 import { education, experience, skills, languages, awards } from '../../data/cv';
 import { socialLinks } from '../../lib/links';
+import { formatDate } from '../../lib/content';
 
 export const getStaticPaths = localeParams;
 
@@ -20,7 +21,7 @@ const timeline = [
     start: e.start,
     period: range(e.start, e.end),
     title: e.degree[lang],
-    org: e.institution,
+    org: e.institution[lang],
     url: undefined as string | undefined,
     notes: e.details?.[lang] ? [e.details[lang]] : [],
   })),
@@ -52,7 +53,7 @@ const contactLinks = socialLinks(lang);
             </a>
             {profile.cvUpdated && (
               <span class="mono muted">
-                {ui.lastUpdated}: {profile.cvUpdated}
+                {ui.lastUpdated}: {formatDate(new Date(`${profile.cvUpdated}-01`), lang)}
               </span>
             )}
           </div>
