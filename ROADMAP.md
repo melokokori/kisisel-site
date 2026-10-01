@@ -37,19 +37,20 @@ Toplanacaklar:
 - [ ] Profesyonel fotoğraf, güncel CV (TR + EN, sıkıştırılmış PDF — mevcut 3.8 MB)
 - [ ] Linkler: GitHub, LinkedIn, Google Scholar, ORCID (yoksa açılmalı)
 
-### Faz 2 — Tasarım yönü
-- [ ] Claude Design'da 2–3 farklı görsel yön (hero + proje kartı + yayın listesi)
-- [ ] Birini seç → renk, tipografi, boşluk token'ları
-- [ ] Açık/koyu tema
+### Faz 2 — Tasarım yönü ✅
+- [x] Claude Design'da 3 yön (Vaka Dosyası / Akademik Editoryal / Sinyal) → **C · Sinyal** seçildi
+- [x] Palet: **Luminol** (koyu) + açık eşi; Geist / Geist Mono
+- [x] Açık/koyu tema geçişi
+- [x] Tasarım Astro'ya uygulandı; `/cv` → `/about` (hikâye + CV + iletişim)
 
 ### Faz 3 — Astro iskeleti ve sayfalar
-- [ ] Astro kurulumu, Vercel ayarları, eski dosyaların temizlenmesi
+- [x] Astro kurulumu, Vercel ayarları, eski dosyaların temizlenmesi
 - [ ] Ana sayfa: kimlik, konumlandırma, öne çıkan 3 proje, son yazılar, iletişim
 - [ ] `/research` — ilgi alanları, tez, yayınlar
 - [ ] `/projects` + her proje için detay sayfası (case study)
-- [ ] `/cv` — web CV + PDF indirme
+- [x] `/about` — hikâye, zaman çizelgesi, yetkinlikler, CV PDF, iletişim
 - [ ] `/blog` veya `/notes` — teknik yazılar (uzmanlık kanıtı)
-- [ ] TR/EN dil geçişi
+- [x] TR/EN dil geçişi
 
 ### Faz 4 — Kalite ve görünürlük
 - [ ] SEO: meta, Open Graph görselleri, `sitemap.xml`, JSON-LD (`Person`, `ScholarlyArticle`)

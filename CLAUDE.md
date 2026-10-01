@@ -28,4 +28,5 @@ Consult these guides before working on related tasks:
 - Uzun içerik: `src/content/{projects,posts}/{tr,en}/<slug>.md` — şablonlar `_sablon.md`
 - Sayfalar `src/pages/[...locale]/` altında tek dosyadan TR (`/`) ve EN (`/en`) üretilir
 - Boş alanlar sitede "yakında" notu olarak görünür (`src/components/Section.astro`)
+- Tasarım: C · Sinyal, Luminol paleti — token'lar `src/styles/global.css` (`:root` koyu, `[data-theme='light']` açık). Tasarım tuvali: https://claude.ai/artifact/CYPxDNpNDFD4S9AEwL2o3J
 - Deploy: `main` → Vercel (`kisisel-site`), branch'ler → preview
