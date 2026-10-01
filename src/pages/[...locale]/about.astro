@@ -11,7 +11,7 @@ export const getStaticPaths = localeParams;
 
 const { lang } = Astro.props as { lang: Lang };
 const ui = t(lang);
-const range = (start: string, end?: string) => `${start} – ${end || ui.present}`;
+const range = (start: string, end?: string) => (end === start ? start : `${start} – ${end || ui.present}`);
 
 // Eğitim ve deneyim tek zaman çizelgesinde, yeniden eskiye
 const timeline = [
@@ -114,7 +114,7 @@ const contactLinks = socialLinks(lang);
           <ul class="plain">
             {languages.map((l) => (
               <li>
-                {l.name[lang]} — <span class="muted">{l.level}</span>
+                {l.name[lang]} — <span class="muted">{l.level[lang]}</span>
               </li>
             ))}
           </ul>
