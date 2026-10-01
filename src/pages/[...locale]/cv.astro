@@ -11,7 +11,7 @@ export const getStaticPaths = localeParams;
 const { lang } = Astro.props as { lang: Lang };
 const ui = t(lang);
 const range = (start: string, end?: string) => (end === start ? start : `${start} – ${end || ui.present}`);
-const site = Astro.site?.host ?? 'kisisel-site-rouge.vercel.app';
+const site = Astro.site?.host ?? 'melihturgut.dev';
 const contact = [
   profile.email && { label: profile.email, href: `mailto:${profile.email}` },
   { label: site, href: `https://${site}` },
