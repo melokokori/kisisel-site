@@ -15,7 +15,11 @@ export type Publication = {
 };
 
 export const research = {
-  summary: empty() as L, // araştırma sayfasının giriş paragrafı
+  // araştırma sayfasının ve ana sayfadaki araştırma bölümünün giriş paragrafı
+  summary: {
+    tr: 'Tez konumu belirleme aşamasındayım. Bu süreçte veriden öğrenen sistemleri ve bu sistemleri web ile ağ altyapıları üzerinden gerçek kullanıcılara ulaştırmanın yollarını inceliyorum.',
+    en: 'I am in the process of defining my thesis topic. Along the way I am exploring systems that learn from data, and how to bring them to real users through web and network infrastructure.',
+  } as L,
   interests: [
     {
       title: { tr: 'Yapay zekâ ve veri bilimi', en: 'AI & data science' },

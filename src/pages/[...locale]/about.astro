@@ -44,7 +44,6 @@ const contactLinks = socialLinks(lang);
       <h1 class="display">{ui.nav.about}</h1>
       {profile.intro[lang] && <p class="opening">{profile.intro[lang]}</p>}
       {profile.bio.map((p) => <p class="para">{p[lang]}</p>)}
-      {!profile.intro[lang] && profile.bio.length === 0 && <p class="empty">{ui.emptySection}</p>}
       {
         profile.cv[lang] && (
           <div class="cv">
@@ -63,7 +62,7 @@ const contactLinks = socialLinks(lang);
     <div class="portrait"><Avatar lang={lang} eager /></div>
   </section>
 
-  <Section id="timeline" title={ui.educationExperience} lang={lang} filled={timeline.length > 0}>
+  <Section id="timeline" title={ui.educationExperience} filled={timeline.length > 0}>
     <ol class="timeline">
       {
         timeline.map((item) => (
@@ -89,7 +88,7 @@ const contactLinks = socialLinks(lang);
     </ol>
   </Section>
 
-  <Section id="skills" title={ui.skills} lang={lang} filled={skills.length > 0}>
+  <Section id="skills" title={ui.skills} filled={skills.length > 0}>
     <div class="grid-cards">
       {
         skills.map((s) => (
@@ -106,43 +105,39 @@ const contactLinks = socialLinks(lang);
     </div>
   </Section>
 
-  <section class="section two-col">
-    <div>
-      <h2 class="h2">{ui.languages}</h2>
-      {
-        languages.length > 0 ? (
-          <ul class="plain">
-            {languages.map((l) => (
-              <li>
-                {l.name[lang]} — <span class="muted">{l.level[lang]}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p class="empty">{ui.emptySection}</p>
-        )
-      }
-    </div>
-    <div>
-      <h2 class="h2">{ui.awards}</h2>
-      {
-        awards.length > 0 ? (
-          <ul class="plain">
-            {awards.map((a) => (
-              <li>
-                {a.url ? <a href={a.url}>{a.title[lang]}</a> : a.title[lang]} —{' '}
-                <span class="muted">
-                  {a.issuer}, {a.year}
-                </span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p class="empty">{ui.emptySection}</p>
-        )
-      }
-    </div>
-  </section>
+  {
+    (languages.length > 0 || awards.length > 0) && (
+      <section class="section two-col">
+        {languages.length > 0 && (
+          <div>
+            <h2 class="h2">{ui.languages}</h2>
+            <ul class="plain">
+              {languages.map((l) => (
+                <li>
+                  {l.name[lang]} — <span class="muted">{l.level[lang]}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {awards.length > 0 && (
+          <div>
+            <h2 class="h2">{ui.awards}</h2>
+            <ul class="plain">
+              {awards.map((a) => (
+                <li>
+                  {a.url ? <a href={a.url}>{a.title[lang]}</a> : a.title[lang]} —{' '}
+                  <span class="muted">
+                    {a.issuer}, {a.year}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </section>
+    )
+  }
 
   <section id="contact" class="card contact" aria-labelledby="contact-title">
     <h2 id="contact-title">{ui.contact}</h2>
@@ -159,7 +154,6 @@ const contactLinks = socialLinks(lang);
         </div>
       )
     }
-    {!profile.email && contactLinks.length === 0 && <p class="muted">{ui.emptySection}</p>}
   </section>
 </Base>
 

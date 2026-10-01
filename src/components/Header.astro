@@ -1,5 +1,6 @@
 ---
 import { localePath, t, type Lang } from '../i18n';
+import { getProjects, getPosts } from '../lib/content';
 
 interface Props {
   lang: Lang;
@@ -11,12 +12,13 @@ const { lang, path } = Astro.props;
 const ui = t(lang);
 const otherLang: Lang = lang === 'tr' ? 'en' : 'tr';
 
+const [projects, posts] = await Promise.all([getProjects(lang), getPosts(lang)]);
 const items = [
-  { href: '/projects', label: ui.nav.projects },
-  { href: '/research', label: ui.nav.research },
-  { href: '/writing', label: ui.nav.writing },
-  { href: '/about', label: ui.nav.about },
-];
+  { href: '/projects', label: ui.nav.projects, show: projects.length > 0 },
+  { href: '/research', label: ui.nav.research, show: true },
+  { href: '/writing', label: ui.nav.writing, show: posts.length > 0 },
+  { href: '/about', label: ui.nav.about, show: true },
+].filter((item) => item.show);
 const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
 ---
 

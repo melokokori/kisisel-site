@@ -29,7 +29,7 @@ const scholarLinks = [
     {research.summary[lang] && <p class="lead">{research.summary[lang]}</p>}
   </section>
 
-  <Section id="interests" title={ui.interests} lang={lang} filled={research.interests.length > 0} flush>
+  <Section id="interests" title={ui.interests} filled={research.interests.length > 0} flush>
     <div class="grid-cards">
       {
         research.interests.map((i) => (
@@ -49,7 +49,7 @@ const scholarLinks = [
     </div>
   </Section>
 
-  {thesis.title[lang] && (<Section id="thesis" title={ui.thesis} lang={lang} filled>
+  {thesis.title[lang] && (<Section id="thesis" title={ui.thesis} filled>
     <div class="card thesis">
       <span class="mono accent">{ui.thesisOngoing}</span>
       <h3>{thesis.title[lang]}</h3>
@@ -84,7 +84,7 @@ const scholarLinks = [
     </div>
   </Section>)}
 
-  <Section id="publications" title={ui.publications} lang={lang} filled={sortedPubs.length > 0}>
+  <Section id="publications" title={ui.publications} filled={sortedPubs.length > 0}>
     {
       scholarLinks.length > 0 && (
         <p class="profiles">

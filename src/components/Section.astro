@@ -1,11 +1,8 @@
 ---
-import { t, type Lang } from '../i18n';
-
 interface Props {
   id: string;
   title: string;
-  lang: Lang;
-  /** false ise içerik yerine "yakında" notu gösterilir. */
+  /** false ise bölüm hiç render edilmez (içerik eklenince kendiliğinden görünür). */
   filled: boolean;
   /** Başlığın sağındaki bağlantı (ör. "Tüm projeler →"). */
   more?: { href: string; label: string };
@@ -13,16 +10,26 @@ interface Props {
   flush?: boolean;
 }
 
-const { id, title, lang, filled, more, flush = false } = Astro.props;
+const { id, title, filled, more, flush = false } = Astro.props;
 ---
 
-<section id={id} aria-labelledby={`${id}-title`} class:list={['section', { flush }]}>
-  <div class="section-head">
-    <h2 id={`${id}-title`} class="h2">{title}</h2>
-    {filled && more && <a href={more.href} class="link-arrow">{more.label} →</a>}
-  </div>
-  {filled ? <slot /> : <p class="empty">{t(lang).emptySection}</p>}
-</section>
+{
+  filled && (
+    <section id={id} aria-labelledby={`${id}-title`} class:list={['section', { flush }]}>
+      <div class="section-head">
+        <h2 id={`${id}-title`} class="h2">
+          {title}
+        </h2>
+        {more && (
+          <a href={more.href} class="link-arrow">
+            {more.label} →
+          </a>
+        )}
+      </div>
+      <slot />
+    </section>
+  )
+}
 
 <style>
   .flush {
