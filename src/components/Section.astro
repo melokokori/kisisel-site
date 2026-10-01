@@ -7,12 +7,26 @@ interface Props {
   lang: Lang;
   /** false ise içerik yerine "yakında" notu gösterilir. */
   filled: boolean;
+  /** Başlığın sağındaki bağlantı (ör. "Tüm projeler →"). */
+  more?: { href: string; label: string };
+  /** Üst çizgisiz (sayfanın ilk bölümü için). */
+  flush?: boolean;
 }
 
-const { id, title, lang, filled } = Astro.props;
+const { id, title, lang, filled, more, flush = false } = Astro.props;
 ---
 
-<section id={id} aria-labelledby={`${id}-title`}>
-  <h2 id={`${id}-title`}>{title}</h2>
+<section id={id} aria-labelledby={`${id}-title`} class:list={['section', { flush }]}>
+  <div class="section-head">
+    <h2 id={`${id}-title`} class="h2">{title}</h2>
+    {filled && more && <a href={more.href} class="link-arrow">{more.label} →</a>}
+  </div>
   {filled ? <slot /> : <p class="empty">{t(lang).emptySection}</p>}
 </section>
+
+<style>
+  .flush {
+    border-top: 0;
+    padding-top: 0;
+  }
+</style>

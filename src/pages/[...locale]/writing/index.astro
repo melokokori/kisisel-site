@@ -1,8 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
-import Section from '../../../components/Section.astro';
 import { localeParams, localePath, t, type Lang } from '../../../i18n';
-import { getPosts, formatDate } from '../../../lib/content';
+import { getPosts, formatDate, readingTime } from '../../../lib/content';
 
 export const getStaticPaths = localeParams;
 
@@ -12,14 +11,63 @@ const posts = await getPosts(lang);
 ---
 
 <Base lang={lang} title={ui.nav.writing}>
-  <h1>{ui.nav.writing}</h1>
-  <Section id="posts" title={ui.nav.writing} lang={lang} filled={posts.length > 0}>
-    {posts.map((p) => (
-      <article>
-        <h3><a href={localePath(lang, `/writing/${p.slug}`)}>{p.data.title}</a></h3>
-        <p>{p.data.description}</p>
-        <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date, lang)}</time>
-      </article>
-    ))}
-  </Section>
+  <section class="intro">
+    <h1 class="display">{ui.nav.writing}</h1>
+  </section>
+
+  {
+    posts.length === 0 ? (
+      <p class="empty">{ui.emptySection}</p>
+    ) : (
+      <ul class="posts">
+        {posts.map((p) => (
+          <li>
+            <a href={localePath(lang, `/writing/${p.slug}`)} class="title">
+              {p.data.title}
+            </a>
+            <p>{p.data.description}</p>
+            <span class="mono muted">
+              <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date, lang)}</time> · {readingTime(p.body)}{' '}
+              {ui.minRead}
+            </span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
 </Base>
+
+<style>
+  .intro {
+    padding: 72px 0 40px;
+  }
+  .empty {
+    margin-bottom: 88px;
+  }
+  .posts {
+    list-style: none;
+    margin: 0 0 88px;
+    padding: 0;
+  }
+  .posts li {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 28px 0;
+    border-top: 1px solid var(--ln);
+  }
+  .posts li:last-child {
+    border-bottom: 1px solid var(--ln);
+  }
+  .title {
+    color: var(--tx);
+    text-decoration: none;
+    font-size: clamp(20px, 2.6vw, 26px);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .posts p {
+    color: var(--tx2);
+    max-width: 62ch;
+  }
+</style>

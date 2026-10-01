@@ -16,3 +16,6 @@ export async function getPosts(lang: Lang) {
 
 export const formatDate = (date: Date, lang: Lang) =>
   date.toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-US', { year: 'numeric', month: 'long' });
+
+/** Dakika cinsinden okuma süresi (≈200 kelime/dk). */
+export const readingTime = (body = '') => Math.max(1, Math.round(body.split(/\s+/).filter(Boolean).length / 200));

@@ -1,0 +1,43 @@
+---
+import type { Lang } from '../i18n';
+import { profile } from '../data/profile';
+import { socialLinks } from '../lib/links';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const links = socialLinks(lang);
+---
+
+<footer>
+  <span>© {new Date().getFullYear()} {profile.name}</span>
+  {
+    links.length > 0 && (
+      <span class="links">
+        {links.map((l) => (
+          <a href={l.href}>{l.label}</a>
+        ))}
+      </span>
+    )
+  }
+</footer>
+
+<style>
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 28px 0 48px;
+    border-top: 1px solid var(--ln);
+    font-size: 14px;
+    color: var(--mu);
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+</style>

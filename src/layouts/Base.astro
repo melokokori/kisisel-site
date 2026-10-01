@@ -1,5 +1,8 @@
 ---
-import { localePath, t, type Lang } from '../i18n';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { localePath, type Lang } from '../i18n';
 import { profile } from '../data/profile';
 
 interface Props {
@@ -9,19 +12,10 @@ interface Props {
 }
 
 const { lang, title, description = profile.tagline[lang] } = Astro.props;
-const ui = t(lang);
 const pageTitle = title ? `${title} — ${profile.name}` : profile.name;
 
 // Aynı sayfanın diğer dildeki karşılığı
 const path = Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/';
-const otherLang: Lang = lang === 'tr' ? 'en' : 'tr';
-const nav = [
-  { href: '/', label: ui.nav.home },
-  { href: '/research', label: ui.nav.research },
-  { href: '/projects', label: ui.nav.projects },
-  { href: '/writing', label: ui.nav.writing },
-  { href: '/cv', label: ui.nav.cv },
-];
 ---
 
 <!doctype html>
@@ -34,35 +28,26 @@ const nav = [
     {description && <meta name="description" content={description} />}
     <link rel="alternate" hreflang="tr" href={localePath('tr', path)} />
     <link rel="alternate" hreflang="en" href={localePath('en', path)} />
+    <meta name="theme-color" content="#0b0e17" />
+    <script is:inline>
+      // Tema: kayıtlı tercih > cihaz ayarı > koyu. Boyamadan önce uygulanır (flaş olmasın).
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('theme'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') {
+          t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+        document.documentElement.dataset.theme = t;
+      })();
+    </script>
   </head>
   <body>
-    <header>
-      <a href={localePath(lang)} class="brand">{profile.name}</a>
-      <nav>
-        {nav.map((item) => <a href={localePath(lang, item.href)}>{item.label}</a>)}
-        <a href={localePath(otherLang, path)} hreflang={otherLang} lang={otherLang}>{ui.switchLang}</a>
-      </nav>
-    </header>
-    <main>
-      <slot />
-    </main>
-    <footer>
-      <p>© {new Date().getFullYear()} {profile.name}</p>
-    </footer>
+    <div class="wrap">
+      <Header lang={lang} path={path} />
+      <main>
+        <slot />
+      </main>
+      <Footer lang={lang} />
+    </div>
   </body>
 </html>
-
-<style is:global>
-  /* Geçici, nötr stil — görsel tasarım Faz 2'de gelecek. */
-  body {
-    margin: 0 auto;
-    max-width: 48rem;
-    padding: 1.5rem 1rem;
-    font-family: system-ui, sans-serif;
-    line-height: 1.6;
-  }
-  header { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: baseline; }
-  nav { display: flex; flex-wrap: wrap; gap: 1rem; }
-  footer { margin-top: 4rem; opacity: 0.6; }
-  .empty { opacity: 0.55; font-style: italic; }
-</style>

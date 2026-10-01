@@ -1,0 +1,315 @@
+---
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import { localeParams, t, type Lang } from '../../i18n';
+import { profile } from '../../data/profile';
+import { education, experience, skills, languages, awards } from '../../data/cv';
+import { socialLinks } from '../../lib/links';
+
+export const getStaticPaths = localeParams;
+
+const { lang } = Astro.props as { lang: Lang };
+const ui = t(lang);
+const range = (start: string, end?: string) => `${start} – ${end || ui.present}`;
+
+// Eğitim ve deneyim tek zaman çizelgesinde, yeniden eskiye
+const timeline = [
+  ...education.map((e) => ({
+    kind: ui.educationTag,
+    start: e.start,
+    period: range(e.start, e.end),
+    title: e.degree[lang],
+    org: e.institution,
+    url: undefined as string | undefined,
+    notes: e.details?.[lang] ? [e.details[lang]] : [],
+  })),
+  ...experience.map((x) => ({
+    kind: ui.experienceTag,
+    start: x.start,
+    period: range(x.start, x.end),
+    title: x.role[lang],
+    org: x.organization,
+    url: x.url,
+    notes: x.highlights.map((h) => h[lang]),
+  })),
+].sort((a, b) => b.start.localeCompare(a.start));
+
+const contactLinks = socialLinks(lang);
+---
+
+<Base lang={lang} title={ui.nav.about}>
+  <section class="intro">
+    <div class="story">
+      <h1 class="display">{ui.nav.about}</h1>
+      {profile.intro[lang] && <p class="opening">{profile.intro[lang]}</p>}
+      {profile.bio.map((p) => <p class="para">{p[lang]}</p>)}
+      {!profile.intro[lang] && profile.bio.length === 0 && <p class="empty">{ui.emptySection}</p>}
+      {
+        profile.cv[lang] && (
+          <div class="cv">
+            <a href={profile.cv[lang]} class="btn btn-primary" download>
+              {ui.downloadCv}
+            </a>
+            {profile.cvUpdated && (
+              <span class="mono muted">
+                {ui.lastUpdated}: {profile.cvUpdated}
+              </span>
+            )}
+          </div>
+        )
+      }
+    </div>
+    {
+      profile.photo ? (
+        <img src={profile.photo} alt={profile.name} class="portrait" />
+      ) : (
+        <div class="portrait hatch" aria-hidden="true" />
+      )
+    }
+  </section>
+
+  <Section id="timeline" title={ui.educationExperience} lang={lang} filled={timeline.length > 0}>
+    <ol class="timeline">
+      {
+        timeline.map((item) => (
+          <li>
+            <span class="dot" aria-hidden="true" />
+            <div>
+              <span class="mono muted">
+                {item.period} · {item.kind}
+              </span>
+              <h3>{item.title}</h3>
+              <span class="org">{item.url ? <a href={item.url}>{item.org}</a> : item.org}</span>
+              {item.notes.length > 0 && (
+                <ul>
+                  {item.notes.map((n) => (
+                    <li>{n}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section id="skills" title={ui.skills} lang={lang} filled={skills.length > 0}>
+    <div class="grid-cards">
+      {
+        skills.map((s) => (
+          <div class="card skill">
+            <h3>{s.group[lang]}</h3>
+            <ul class="pills">
+              {s.items.map((item) => (
+                <li class="pill">{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <section class="section two-col">
+    <div>
+      <h2 class="h2">{ui.languages}</h2>
+      {
+        languages.length > 0 ? (
+          <ul class="plain">
+            {languages.map((l) => (
+              <li>
+                {l.name[lang]} — <span class="muted">{l.level}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="empty">{ui.emptySection}</p>
+        )
+      }
+    </div>
+    <div>
+      <h2 class="h2">{ui.awards}</h2>
+      {
+        awards.length > 0 ? (
+          <ul class="plain">
+            {awards.map((a) => (
+              <li>
+                {a.url ? <a href={a.url}>{a.title[lang]}</a> : a.title[lang]} —{' '}
+                <span class="muted">
+                  {a.issuer}, {a.year}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="empty">{ui.emptySection}</p>
+        )
+      }
+    </div>
+  </section>
+
+  <section id="contact" class="card contact" aria-labelledby="contact-title">
+    <h2 id="contact-title">{ui.contact}</h2>
+    {profile.contactNote[lang] && <p class="note">{profile.contactNote[lang]}</p>}
+    {profile.email && <a href={`mailto:${profile.email}`} class="email mono">{profile.email}</a>}
+    {
+      contactLinks.length > 0 && (
+        <div class="contact-links">
+          {contactLinks.map((l) => (
+            <a href={l.href} class="btn">
+              {l.label}
+            </a>
+          ))}
+        </div>
+      )
+    }
+    {!profile.email && contactLinks.length === 0 && <p class="muted">{ui.emptySection}</p>}
+  </section>
+</Base>
+
+<style>
+  .intro {
+    padding: 72px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 56px;
+    align-items: flex-start;
+  }
+  .story {
+    flex: 3 1 460px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .opening {
+    font-size: 22px;
+    line-height: 1.5;
+  }
+  .para {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--tx2);
+    max-width: 62ch;
+  }
+  .cv {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .portrait {
+    flex: 1 1 260px;
+    max-width: 360px;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--ln);
+  }
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .timeline > li {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 20px;
+    position: relative;
+    padding-bottom: 36px;
+  }
+  .timeline > li::before {
+    content: '';
+    position: absolute;
+    left: 9.5px;
+    top: 20px;
+    bottom: 0;
+    width: 1px;
+    background: var(--ln2);
+  }
+  .timeline > li:last-child::before {
+    display: none;
+  }
+  .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    margin: 6px auto 0;
+    background: var(--ac);
+  }
+  .timeline > li > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .timeline h3 {
+    font-size: 20px;
+  }
+  .org {
+    color: var(--tx2);
+  }
+  .timeline ul {
+    margin: 4px 0 0;
+    padding-left: 18px;
+    color: var(--tx2);
+    max-width: 62ch;
+  }
+  .skill {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .skill h3 {
+    font-size: 17px;
+  }
+  .two-col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: 48px;
+  }
+  .two-col > div {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .plain {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 17px;
+  }
+  .contact {
+    margin: 72px 0;
+    padding: clamp(28px, 5vw, 64px);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    scroll-margin-top: 24px;
+  }
+  .contact h2 {
+    font-size: clamp(36px, 5vw, 56px);
+    letter-spacing: -0.03em;
+  }
+  .note {
+    font-size: 18px;
+    color: var(--tx2);
+    max-width: 52ch;
+  }
+  .email {
+    align-self: flex-start;
+    font-size: clamp(18px, 3vw, 30px);
+    padding: 8px 0;
+    overflow-wrap: anywhere;
+  }
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+</style>

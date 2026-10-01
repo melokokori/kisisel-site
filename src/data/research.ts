@@ -1,6 +1,6 @@
 import { empty, type L } from '../i18n';
 
-export type Interest = { title: L; description: L };
+export type Interest = { title: L; description: L; keywords: string[] };
 
 export type Publication = {
   title: string;
@@ -20,9 +20,10 @@ export const research = {
   thesis: {
     title: empty() as L,
     advisor: '',
-    status: empty() as L, // ör. "Literatür taraması", "Deneyler sürüyor"
+    stage: null as number | null, // 0 Literatür, 1 Yöntem, 2 Deneyler, 3 Yazım, 4 Savunma (i18n thesisStages)
     abstract: empty() as L,
-    year: '',
+    started: '', // ör. '2025'
+    institution: '',
   },
 };
 

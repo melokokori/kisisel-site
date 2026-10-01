@@ -1,8 +1,8 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
-import { defaultLang, locales } from '../../../i18n';
-import { getPosts, formatDate } from '../../../lib/content';
+import { defaultLang, localePath, locales, t } from '../../../i18n';
+import { getPosts, formatDate, readingTime } from '../../../lib/content';
 
 export async function getStaticPaths() {
   const paths = [];
@@ -18,13 +18,45 @@ export async function getStaticPaths() {
 }
 
 const { lang, post } = Astro.props;
+const ui = t(lang);
 const { Content } = await render(post);
 ---
 
 <Base lang={lang} title={post.data.title} description={post.data.description}>
   <article>
-    <h1>{post.data.title}</h1>
-    <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, lang)}</time>
-    <Content />
+    <header class="head">
+      <a href={localePath(lang, '/writing')} class="back">← {ui.backToWriting}</a>
+      <span class="mono muted">
+        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, lang)}</time> · {readingTime(post.body)}
+        {ui.minRead}
+      </span>
+      <h1 class="display">{post.data.title}</h1>
+      <p class="lead">{post.data.description}</p>
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
   </article>
 </Base>
+
+<style>
+  .head {
+    padding: 56px 0 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 820px;
+  }
+  .head .display {
+    font-size: clamp(40px, 6vw, 72px);
+  }
+  .back {
+    align-self: flex-start;
+    font-size: 15px;
+    padding: 12px 0;
+    text-decoration: none;
+  }
+  .prose {
+    padding-bottom: 88px;
+  }
+</style>

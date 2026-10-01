@@ -12,15 +12,18 @@ const projects = defineCollection({
     summary: z.string(), // kart üzerindeki 1–2 cümle
     date: z.coerce.date(),
     role: z.string().optional(), // projedeki rolün
+    period: z.string().optional(), // ör. 'Şubat – Haziran 2026'
+    stack: z.array(z.string()).default([]), // kullanılan teknolojiler
+    metrics: z.array(z.object({ value: z.string(), label: z.string() })).default([]), // sonuç kutuları
     tags: z.array(z.string()).default([]),
     featured: z.boolean().default(false), // ana sayfada gösterilsin mi
     cover: z.string().optional(), // public/ altındaki görsel yolu
     links: z
       .object({
-        github: z.string().url().optional(),
-        demo: z.string().url().optional(),
-        paper: z.string().url().optional(),
-        video: z.string().url().optional(),
+        github: z.url().optional(),
+        demo: z.url().optional(),
+        paper: z.url().optional(),
+        video: z.url().optional(),
       })
       .default({}),
   }),
