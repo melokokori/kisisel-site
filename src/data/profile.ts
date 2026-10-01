@@ -17,12 +17,12 @@ export const profile = {
   contactNote: empty() as L, // kimlerden haber beklediğin: işbirliği, staj, doktora pozisyonu
   photo: '', // public/ altındaki yol, ör. '/images/melih.jpg'
   location: empty() as L,
-  email: '',
+  email: '7melihturgut@gmail.com',
   cvUpdated: '', // ör. '2026-10'
   cv: empty() as L, // public/ altındaki PDF yolları, ör. { tr: '/cv/melih-turgut-tr.pdf', en: '/cv/melih-turgut-en.pdf' }
   links: {
-    github: '',
-    linkedin: '',
+    github: 'https://github.com/melokokori',
+    linkedin: 'https://www.linkedin.com/in/melihturgut1/',
     scholar: '', // Google Scholar
     orcid: '',
   },
