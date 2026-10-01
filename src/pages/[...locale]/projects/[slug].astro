@@ -1,0 +1,227 @@
+---
+import { render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { defaultLang, localePath, locales, t } from '../../../i18n';
+import { getProjects } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const perLang = await Promise.all(
+    locales.map(async (lang) => {
+      const projects = await getProjects(lang);
+      return projects.map((project, i) => {
+        const next = projects[(i + 1) % projects.length];
+        return {
+          params: { locale: lang === defaultLang ? undefined : lang, slug: project.slug },
+          props: { lang, project, next: next.slug === project.slug ? undefined : next },
+        };
+      });
+    }),
+  );
+  return perLang.flat();
+}
+
+const { lang, project, next } = Astro.props;
+const ui = t(lang);
+const { data } = project;
+const { Content, headings } = await render(project);
+const toc = headings.filter((h) => h.depth === 2);
+const links = (Object.entries(data.links) as [keyof typeof ui.linkLabels, string | undefined][]).filter(
+  ([, href]) => href,
+);
+const meta = [
+  { label: ui.role, value: data.role },
+  { label: ui.period, value: data.period },
+  { label: ui.stack, value: data.stack.join(', ') },
+].filter((m) => m.value);
+---
+
+<Base lang={lang} title={data.title} description={data.summary}>
+  <section class="head">
+    <a href={localePath(lang, '/projects')} class="back">← {ui.backToProjects}</a>
+    <span class="mono accent">{[data.date.getFullYear(), ...data.tags.slice(0, 2)].join(' · ')}</span>
+    <h1 class="display">{data.title}</h1>
+    <p class="lead">{data.summary}</p>
+  </section>
+
+  {
+    (meta.length > 0 || links.length > 0) && (
+      <dl class="meta">
+        {meta.map((m) => (
+          <div>
+            <dt class="mono muted">{m.label}</dt>
+            <dd>{m.value}</dd>
+          </div>
+        ))}
+        {links.length > 0 && (
+          <div>
+            <dt class="mono muted">{ui.links}</dt>
+            <dd>
+              {links.map(([name, href], i) => (
+                <>
+                  {i > 0 && ' · '}
+                  <a href={href}>{ui.linkLabels[name]}</a>
+                </>
+              ))}
+            </dd>
+          </div>
+        )}
+      </dl>
+    )
+  }
+
+  {data.cover && <img src={data.cover} alt="" class="cover" />}
+
+  <div class="body">
+    {
+      toc.length > 1 && (
+        <nav aria-label={ui.onThisPage} class="toc">
+          <span class="mono muted">{ui.onThisPage}</span>
+          {toc.map((h) => (
+            <a href={`#${h.slug}`}>{h.text}</a>
+          ))}
+        </nav>
+      )
+    }
+    <article class="prose">
+      <Content />
+      {
+        data.metrics.length > 0 && (
+          <div class="metrics">
+            {data.metrics.map((m) => (
+              <div class="card">
+                <span class="value">{m.value}</span>
+                <span class="muted">{m.label}</span>
+              </div>
+            ))}
+          </div>
+        )
+      }
+    </article>
+  </div>
+
+  {
+    next && (
+      <a href={localePath(lang, `/projects/${next.slug}`)} class="card next">
+        <span>
+          <span class="mono muted">{ui.nextProject}</span>
+          <span class="next-title">{next.data.title}</span>
+        </span>
+        <span class="accent" aria-hidden="true">
+          →
+        </span>
+      </a>
+    )
+  }
+</Base>
+
+<style>
+  .head {
+    padding: 56px 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .back {
+    align-self: flex-start;
+    font-size: 15px;
+    padding: 12px 0;
+    text-decoration: none;
+  }
+  .head .lead {
+    max-width: 46ch;
+  }
+  .meta {
+    margin: 0 0 40px;
+    padding: 24px 0;
+    border-top: 1px solid var(--ln);
+    border-bottom: 1px solid var(--ln);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+  }
+  .meta div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .meta dd {
+    margin: 0;
+  }
+  .cover {
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--ln);
+    margin-bottom: 72px;
+  }
+  .body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 56px;
+    padding-bottom: 88px;
+  }
+  .toc {
+    flex: 1 1 180px;
+    max-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 15px;
+    align-self: flex-start;
+    position: sticky;
+    top: 24px;
+  }
+  .toc .mono {
+    padding-bottom: 8px;
+  }
+  .toc a {
+    color: var(--tx);
+    text-decoration: none;
+    padding: 10px 0;
+  }
+  .prose {
+    flex: 3 1 520px;
+    min-width: 0;
+  }
+  .prose :global(h2:first-child) {
+    margin-top: 0;
+  }
+  .metrics {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+  .metrics .card {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .value {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ac);
+  }
+  .next {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 72px;
+    padding: 28px;
+    color: var(--tx);
+    text-decoration: none;
+    font-size: 24px;
+  }
+  .next > span:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .next-title {
+    font-weight: 600;
+  }
+</style>

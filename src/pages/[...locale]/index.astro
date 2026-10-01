@@ -1,0 +1,207 @@
+---
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import Signal from '../../components/Signal.astro';
+import Avatar from '../../components/Avatar.astro';
+import { localeParams, localePath, t, type Lang } from '../../i18n';
+import { profile } from '../../data/profile';
+import { research } from '../../data/research';
+import { getProjects, getPosts, formatDate, readingTime } from '../../lib/content';
+
+export const getStaticPaths = localeParams;
+
+const { lang } = Astro.props as { lang: Lang };
+const ui = t(lang);
+
+const projects = await getProjects(lang);
+const featured = projects.filter((p) => p.data.featured).slice(0, 3);
+const cta = projects.length > 0 ? { href: '/projects', label: ui.nav.projects } : { href: '/about', label: ui.nav.about };
+const recentPosts = (await getPosts(lang)).slice(0, 3);
+const interests = research.interests.map((i) => i.title[lang]).filter(Boolean);
+const { thesis } = research;
+---
+
+<Base lang={lang}>
+  <section class="hero">
+    <div class="hero-text">
+    {interests.length > 0 && <p class="mono accent">{interests.join(' / ')}</p>}
+    <h1>{profile.name}</h1>
+    {profile.role[lang] && <p class="role">{profile.role[lang]}</p>}
+    {profile.tagline[lang] && <p class="lead">{profile.tagline[lang]}</p>}
+    <div class="actions">
+      <a href={localePath(lang, cta.href)} class="btn btn-primary">{cta.label}</a>
+      {profile.cv[lang] && <a href={profile.cv[lang]} class="btn" download>{ui.downloadCv}</a>}
+    </div>
+    </div>
+    <div class="hero-avatar"><Avatar lang={lang} eager /></div>
+  </section>
+
+  <Signal />
+
+  <Section
+    id="featured"
+    title={ui.featured}
+    filled={featured.length > 0}
+    more={{ href: localePath(lang, '/projects'), label: ui.allProjects }}
+    flush
+  >
+    <div class="grid-cards">
+      {featured.map((p) => <ProjectCard lang={lang} slug={p.slug} {...p.data} />)}
+    </div>
+  </Section>
+
+  <section class="section research" aria-labelledby="research-title">
+    <div class="research-text">
+      <h2 id="research-title" class="h2">{ui.nav.research}</h2>
+      {research.summary[lang] && <p class="lead">{research.summary[lang]}</p>}
+      <a href={localePath(lang, '/research')} class="link-arrow">{ui.researchMore} →</a>
+    </div>
+    {
+      thesis.title[lang] && (
+        <div class="card thesis">
+          <span class="mono accent">{ui.thesisOngoing}</span>
+          <span class="thesis-title">{thesis.title[lang]}</span>
+          {thesis.advisor && <span class="muted">{ui.advisor}: {thesis.advisor}</span>}
+        </div>
+      )
+    }
+  </section>
+
+  <Section
+    id="writing"
+    title={ui.recentPosts}
+    filled={recentPosts.length > 0}
+    more={{ href: localePath(lang, '/writing'), label: ui.allPosts }}
+  >
+    <ul class="posts">
+      {
+        recentPosts.map((p) => (
+          <li>
+            <a href={localePath(lang, `/writing/${p.slug}`)}>{p.data.title}</a>
+            <span class="mono muted">
+              {formatDate(p.data.date, lang)} · {readingTime(p.body)} {ui.minRead}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <section class="card contact" aria-labelledby="contact-title">
+    <div>
+      <h2 id="contact-title" class="h2">{ui.contact}</h2>
+      {profile.contactNote[lang] && <p>{profile.contactNote[lang]}</p>}
+    </div>
+    <a href={localePath(lang, '/about#contact')} class="btn btn-primary">{ui.contactCta}</a>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding: clamp(40px, 8vw, 80px) 0 24px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 340px);
+    align-items: center;
+    gap: 48px;
+  }
+  .hero-text {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    min-width: 0;
+  }
+  @media (max-width: 760px) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .hero-avatar {
+      order: -1;
+      width: min(220px, 60%);
+    }
+  }
+  .hero .mono {
+    font-size: 14px;
+  }
+  h1 {
+    font-size: clamp(56px, 9vw, 120px);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+  }
+  .role {
+    margin-top: -8px;
+    font-size: 17px;
+    color: var(--mu);
+  }
+  .hero .lead {
+    max-width: 36ch;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .research {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: 48px;
+  }
+  .research-text {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .thesis {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-self: start;
+  }
+  .thesis-title {
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .posts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .posts li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding: 22px 0;
+    border-top: 1px solid var(--ln);
+  }
+  .posts li:last-child {
+    border-bottom: 1px solid var(--ln);
+  }
+  .posts a {
+    color: var(--tx);
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .contact {
+    margin: 72px 0;
+    padding: clamp(28px, 5vw, 56px);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+  }
+  .contact div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 48ch;
+  }
+  .contact p {
+    color: var(--tx2);
+  }
+</style>

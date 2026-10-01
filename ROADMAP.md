@@ -9,13 +9,13 @@ Ziyaretçi 10 saniyede şunu anlamalı: *kim, ne üzerine çalışıyor, neyi ka
 | Konu | Karar | Neden |
 |---|---|---|
 | Framework | **Astro** (statik çıktı) | İçerik odaklı, sıfır JS varsayılan, Markdown/MDX içerik koleksiyonları, Lighthouse 100'e yakın |
-| İçerik | `src/content/` altında Markdown (projeler, yayınlar, yazılar) | Yeni proje/yazı eklemek = tek `.md` dosyası |
-| Dil | TR + EN (Astro i18n) | Akademik çevre ve yurtdışı başvuruları için EN şart |
+| İçerik | Projeler/yazılar `src/content/` altında Markdown; profil, araştırma, yayınlar, CV `src/data/*.ts` | Yeni proje/yazı eklemek = tek `.md` dosyası |
+| Dil | TR (`/`) + EN (`/en`), tek sayfa dosyasından | Akademik çevre ve yurtdışı başvuruları için EN şart |
 | Deploy | GitHub `main` → Vercel otomatik deploy; PR'lar → preview URL | Mevcut `kisisel-site` Vercel projesi kullanılacak |
 | Tasarım | Claude Design ile görsel yön keşfi → `frontend-design` skill ile koda dökme | Jenerik "AI şablonu" görüntüsünden kaçınmak |
 | Denetim | `web-design-guidelines` skill + Lighthouse | Erişilebilirlik, performans, UX hataları |
 
-Eski site (index/hakkimda/iletisim + chaos/sun/weather/theme efektleri) `legacy/` etiketiyle git geçmişinde kalır, yeni sitede kullanılmaz.
+Eski site (index/hakkimda/iletisim + chaos/sun/weather/theme efektleri, eski CV PDF'i) `legacy-v1` tag'inde kalır, yeni sitede kullanılmaz.
 
 ## Fazlar
 
@@ -24,7 +24,10 @@ Eski site (index/hakkimda/iletisim + chaos/sun/weather/theme efektleri) `legacy/
 - [x] Mevcut durum incelendi (statik HTML, Vercel + GitHub bağlı)
 
 ### Faz 1 — İçerik envanteri (en kritik faz)
-Site, içeriği kadar iyidir. Toplanacaklar:
+Site, içeriği kadar iyidir.
+- [x] Bölüm iskeleti ve veri şemaları kuruldu (Astro); tüm alanlar boş — doldurulacak yerler `CLAUDE.md` → Proje yapısı
+
+Toplanacaklar:
 - [ ] Tek cümlelik konumlandırma ("X alanında Y üzerine çalışan ...")
 - [ ] Araştırma ilgi alanları (3–4 başlık) + tez konusu / danışman
 - [ ] Projeler: her biri için problem → yaklaşım → sonuç → link (GitHub/demo/video)
@@ -34,19 +37,20 @@ Site, içeriği kadar iyidir. Toplanacaklar:
 - [ ] Profesyonel fotoğraf, güncel CV (TR + EN, sıkıştırılmış PDF — mevcut 3.8 MB)
 - [ ] Linkler: GitHub, LinkedIn, Google Scholar, ORCID (yoksa açılmalı)
 
-### Faz 2 — Tasarım yönü
-- [ ] Claude Design'da 2–3 farklı görsel yön (hero + proje kartı + yayın listesi)
-- [ ] Birini seç → renk, tipografi, boşluk token'ları
-- [ ] Açık/koyu tema
+### Faz 2 — Tasarım yönü ✅
+- [x] Claude Design'da 3 yön (Vaka Dosyası / Akademik Editoryal / Sinyal) → **C · Sinyal** seçildi
+- [x] Palet: **Luminol** (koyu) + açık eşi; Geist / Geist Mono
+- [x] Açık/koyu tema geçişi
+- [x] Tasarım Astro'ya uygulandı; `/cv` → `/about` (hikâye + CV + iletişim)
 
 ### Faz 3 — Astro iskeleti ve sayfalar
-- [ ] Astro kurulumu, Vercel ayarları, eski dosyaların temizlenmesi
+- [x] Astro kurulumu, Vercel ayarları, eski dosyaların temizlenmesi
 - [ ] Ana sayfa: kimlik, konumlandırma, öne çıkan 3 proje, son yazılar, iletişim
 - [ ] `/research` — ilgi alanları, tez, yayınlar
 - [ ] `/projects` + her proje için detay sayfası (case study)
-- [ ] `/cv` — web CV + PDF indirme
+- [x] `/about` — hikâye, zaman çizelgesi, yetkinlikler, CV PDF, iletişim
 - [ ] `/blog` veya `/notes` — teknik yazılar (uzmanlık kanıtı)
-- [ ] TR/EN dil geçişi
+- [x] TR/EN dil geçişi
 
 ### Faz 4 — Kalite ve görünürlük
 - [ ] SEO: meta, Open Graph görselleri, `sitemap.xml`, JSON-LD (`Person`, `ScholarlyArticle`)

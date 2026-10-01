@@ -1,0 +1,39 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  /** false ise bölüm hiç render edilmez (içerik eklenince kendiliğinden görünür). */
+  filled: boolean;
+  /** Başlığın sağındaki bağlantı (ör. "Tüm projeler →"). */
+  more?: { href: string; label: string };
+  /** Üst çizgisiz (sayfanın ilk bölümü için). */
+  flush?: boolean;
+}
+
+const { id, title, filled, more, flush = false } = Astro.props;
+---
+
+{
+  filled && (
+    <section id={id} aria-labelledby={`${id}-title`} class:list={['section', { flush }]}>
+      <div class="section-head">
+        <h2 id={`${id}-title`} class="h2">
+          {title}
+        </h2>
+        {more && (
+          <a href={more.href} class="link-arrow">
+            {more.label} →
+          </a>
+        )}
+      </div>
+      <slot />
+    </section>
+  )
+}
+
+<style>
+  .flush {
+    border-top: 0;
+    padding-top: 0;
+  }
+</style>

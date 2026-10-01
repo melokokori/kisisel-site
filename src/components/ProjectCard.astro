@@ -1,0 +1,86 @@
+---
+import { localePath, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  slug: string;
+  title: string;
+  summary: string;
+  date: Date;
+  role?: string;
+  tags: string[];
+  cover?: string;
+}
+
+const { lang, slug, title, summary, date, role, tags, cover } = Astro.props;
+const meta = [date.getFullYear(), role].filter(Boolean).join(' · ');
+---
+
+<article class="card project" data-tags={tags.join('|')}>
+  {
+    cover ? (
+      <img src={cover} alt="" class="cover" loading="lazy" />
+    ) : (
+      <div class="cover hatch" aria-hidden="true" />
+    )
+  }
+  <div class="body">
+    <span class="mono muted">{meta}</span>
+    <h3><a href={localePath(lang, `/projects/${slug}`)}>{title}</a></h3>
+    <p>{summary}</p>
+    {
+      tags.length > 0 && (
+        <ul class="pills">
+          {tags.map((tag) => (
+            <li class="pill">{tag}</li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .project {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .project:hover {
+    border-color: var(--ln2);
+  }
+  .cover {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    object-fit: cover;
+  }
+  .body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-grow: 1;
+  }
+  h3 {
+    font-size: 20px;
+  }
+  h3 a {
+    color: var(--tx);
+    text-decoration: none;
+  }
+  /* Tüm kart tıklanabilir */
+  h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  p {
+    line-height: 1.55;
+    color: var(--tx2);
+  }
+  .pills {
+    margin-top: auto;
+    padding-top: 8px;
+  }
+</style>

@@ -1,0 +1,99 @@
+---
+import Base from '../../../layouts/Base.astro';
+import ProjectCard from '../../../components/ProjectCard.astro';
+import { localeParams, t, type Lang } from '../../../i18n';
+import { getProjects } from '../../../lib/content';
+
+export const getStaticPaths = localeParams;
+
+const { lang } = Astro.props as { lang: Lang };
+const ui = t(lang);
+const projects = await getProjects(lang);
+const tags = [...new Set(projects.flatMap((p) => p.data.tags))].sort((a, b) => a.localeCompare(b, lang));
+---
+
+<Base lang={lang} title={ui.nav.projects}>
+  <section class="intro">
+    <h1 class="display">{ui.nav.projects}</h1>
+  </section>
+
+  {
+    projects.length === 0 ? (
+      <p class="empty">{ui.emptySection}</p>
+    ) : (
+      <>
+        {tags.length > 1 && (
+          <div class="filters" role="group" aria-label={ui.filterLabel}>
+            <button type="button" data-tag="" aria-pressed="true">
+              {ui.filterAll}
+            </button>
+            {tags.map((tag) => (
+              <button type="button" data-tag={tag} aria-pressed="false">
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
+        <div class="grid-cards list">
+          {projects.map((p) => (
+            <ProjectCard lang={lang} slug={p.slug} {...p.data} />
+          ))}
+        </div>
+      </>
+    )
+  }
+</Base>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filters button');
+  const cards = document.querySelectorAll<HTMLElement>('.list [data-tags]');
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.tag ?? '';
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      cards.forEach((card) => {
+        card.hidden = tag !== '' && !(card.dataset.tags ?? '').split('|').includes(tag);
+      });
+    }),
+  );
+</script>
+
+<style>
+  .intro {
+    padding: 72px 0 40px;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 32px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--ln);
+  }
+  .filters button {
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    background: transparent;
+    color: var(--tx);
+    border: 1px solid var(--ln2);
+  }
+  .filters button[aria-pressed='true'] {
+    background: var(--ac);
+    border-color: var(--ac);
+    color: var(--on);
+    font-weight: 600;
+  }
+  .list {
+    padding-bottom: 88px;
+  }
+  .empty {
+    margin-bottom: 88px;
+  }
+  [hidden] {
+    display: none !important;
+  }
+</style>

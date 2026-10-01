@@ -1,0 +1,206 @@
+---
+import Base from '../../layouts/Base.astro';
+import Section from '../../components/Section.astro';
+import PublicationItem from '../../components/PublicationItem.astro';
+import { localeParams, t, type Lang } from '../../i18n';
+import { research, publications } from '../../data/research';
+import { profile } from '../../data/profile';
+
+export const getStaticPaths = localeParams;
+
+const { lang } = Astro.props as { lang: Lang };
+const ui = t(lang);
+const { thesis } = research;
+const sortedPubs = [...publications].sort((a, b) => b.year - a.year);
+const thesisMeta = [
+  { label: ui.advisor, value: thesis.advisor },
+  { label: ui.institution, value: thesis.institution },
+  { label: ui.started, value: thesis.started },
+].filter((m) => m.value);
+const scholarLinks = [
+  { label: 'Google Scholar', href: profile.links.scholar },
+  { label: 'ORCID', href: profile.links.orcid },
+].filter((l) => l.href);
+---
+
+<Base lang={lang} title={ui.nav.research}>
+  <section class="intro">
+    <h1 class="display">{ui.nav.research}</h1>
+    {research.summary[lang] && <p class="lead">{research.summary[lang]}</p>}
+  </section>
+
+  <Section id="interests" title={ui.interests} filled={research.interests.length > 0} flush>
+    <div class="grid-cards">
+      {
+        research.interests.map((i) => (
+          <article class="card interest">
+            <h3>{i.title[lang]}</h3>
+            <p>{i.description[lang]}</p>
+            {i.keywords.length > 0 && (
+              <ul class="pills">
+                {i.keywords.map((k) => (
+                  <li class="pill">{k}</li>
+                ))}
+              </ul>
+            )}
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+
+  {thesis.title[lang] && (<Section id="thesis" title={ui.thesis} filled>
+    <div class="card thesis">
+      <span class="mono accent">{ui.thesisOngoing}</span>
+      <h3>{thesis.title[lang]}</h3>
+      {
+        thesisMeta.length > 0 && (
+          <dl>
+            {thesisMeta.map((m) => (
+              <div>
+                <dt class="mono muted">{m.label}</dt>
+                <dd>{m.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+      {thesis.abstract[lang] && <p class="abstract">{thesis.abstract[lang]}</p>}
+      {
+        thesis.stage !== null && (
+          <div class="progress">
+            <span class="mono muted">{ui.progress}</span>
+            <ol>
+              {ui.thesisStages.map((s, i) => (
+                <li class:list={{ done: i <= (thesis.stage ?? -1) }} aria-current={i === thesis.stage ? 'step' : undefined}>
+                  <span class="bar" />
+                  {s}
+                </li>
+              ))}
+            </ol>
+          </div>
+        )
+      }
+    </div>
+  </Section>)}
+
+  <Section id="publications" title={ui.publications} filled={sortedPubs.length > 0}>
+    {
+      scholarLinks.length > 0 && (
+        <p class="profiles">
+          {scholarLinks.map((l) => (
+            <a href={l.href} class="btn">
+              {l.label}
+            </a>
+          ))}
+        </p>
+      )
+    }
+    <ul class="pubs">
+      {sortedPubs.map((pub) => <PublicationItem lang={lang} pub={pub} />)}
+    </ul>
+  </Section>
+</Base>
+
+<style>
+  .intro {
+    padding: 72px 0 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .interest {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .interest h3 {
+    font-size: 20px;
+  }
+  .interest p {
+    color: var(--tx2);
+  }
+  .interest .pills {
+    margin-top: auto;
+    padding-top: 6px;
+  }
+  .thesis {
+    padding: clamp(24px, 4vw, 48px);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .thesis h3 {
+    font-size: clamp(26px, 4vw, 40px);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    max-width: 30ch;
+  }
+  .thesis dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .thesis dl div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .thesis dd {
+    margin: 0;
+  }
+  .abstract {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--tx2);
+    max-width: 70ch;
+  }
+  .progress {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .progress ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .progress li {
+    flex: 1 1 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--mu);
+  }
+  .bar {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--ln2);
+  }
+  .progress li.done {
+    color: var(--tx);
+  }
+  .progress li.done .bar {
+    background: var(--ac);
+  }
+  .profiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .pubs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+</style>

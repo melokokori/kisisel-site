@@ -1,0 +1,65 @@
+---
+import { t, type Lang } from '../i18n';
+import type { Publication } from '../data/research';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+  pub: Publication;
+}
+
+const { lang, pub } = Astro.props;
+const ui = t(lang);
+const lastName = profile.name.split(' ').at(-1) ?? '';
+const href = pub.doi ? `https://doi.org/${pub.doi}` : pub.url || pub.pdf;
+---
+
+<li class="card pub">
+  <span class="mono accent year">{pub.year}</span>
+  <span class="text">
+    {href ? <a href={href}>{pub.title}</a> : pub.title}
+    <span class="by">
+      {
+        pub.authors.map((a, i) => (
+          <>
+            {i > 0 && ', '}
+            {a.includes(lastName) ? <b>{a}</b> : a}
+          </>
+        ))
+      }
+      {' — '}<i>{pub.venue}</i>
+    </span>
+  </span>
+  <span class="pill">{ui.pubTypes[pub.type]}</span>
+</li>
+
+<style>
+  .pub {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 12px 20px;
+    padding: 20px;
+  }
+  .year {
+    min-width: 72px;
+  }
+  .text {
+    flex: 1 1 420px;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .text > a {
+    color: var(--tx);
+  }
+  .by {
+    color: var(--mu);
+    font-size: 15px;
+  }
+  b {
+    color: var(--tx);
+    font-weight: 600;
+  }
+</style>
