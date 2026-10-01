@@ -49,8 +49,16 @@ export const experience: Experience[] = [
     end: '2024',
     highlights: [
       {
-        tr: 'Veri bilimi alanındaki akademik makaleleri inceledim; araştırma süreçleri ve bilimsel yazım aşamalarında pratik deneyim kazandım.',
-        en: 'Reviewed academic papers in data science and gained hands-on experience with research processes and scientific writing.',
+        tr: 'Veri bilimi alanında literatür taraması yaptım; ilgili makaleleri inceleyip özetledim ve karşılaştırdım.',
+        en: 'Conducted literature reviews in data science, analysing, summarising and comparing relevant papers.',
+      },
+      {
+        tr: 'Veri setleri üzerinde analiz yaptım ve makine öğrenmesi modelleri kurdum.',
+        en: 'Analysed datasets and built machine learning models.',
+      },
+      {
+        tr: 'Akademik bir çalışmanın yazım sürecine katkı verdim; araştırmadan yayına giden süreci yakından deneyimledim.',
+        en: 'Contributed to the writing of an academic paper and experienced the path from research to publication first-hand.',
       },
     ],
   },
@@ -63,14 +71,26 @@ export const experience: Experience[] = [
     end: '2022',
     highlights: [
       {
-        tr: 'Güvenlik protokolleri, saldırı türleri ve savunma mekanizmaları üzerine bilgimi derinleştirdim.',
-        en: 'Deepened my knowledge of security protocols, attack types and defense mechanisms.',
+        tr: 'Ağ ve zafiyet taramaları yaparak sistemlerdeki güvenlik açıklarını tespit ettim.',
+        en: 'Performed network and vulnerability scans to identify security weaknesses in systems.',
+      },
+      {
+        tr: 'Test ortamında saldırı senaryolarını simüle ederek saldırı türlerini ve savunma mekanizmalarını uygulamalı olarak inceledim.',
+        en: 'Simulated attack scenarios in a test environment to study attack types and defense mechanisms hands-on.',
       },
     ],
   },
 ];
 
-export const skills: SkillGroup[] = [];
+export const skills: SkillGroup[] = [
+  { group: { tr: 'Programlama dilleri', en: 'Languages' }, items: ['Python', 'R', 'Java', 'JavaScript', 'SQL'] },
+  {
+    group: { tr: 'Veri ve yapay zekâ', en: 'Data & AI' },
+    items: ['pandas', 'NumPy', 'scikit-learn', 'PyTorch', 'TensorFlow'],
+  },
+  { group: { tr: 'Web geliştirme', en: 'Web development' }, items: ['HTML', 'CSS', 'React', 'Astro', 'Node.js', 'REST API'] },
+  { group: { tr: 'Araçlar ve sistemler', en: 'Tools & systems' }, items: ['Git', 'GitHub', 'Linux'] },
+];
 
 export const languages: Language[] = [
   { name: { tr: 'Türkçe', en: 'Turkish' }, level: { tr: 'ana dil', en: 'native' } },
