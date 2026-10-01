@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Section from '../../components/Section.astro';
+import Avatar from '../../components/Avatar.astro';
 import { localeParams, t, type Lang } from '../../i18n';
 import { profile } from '../../data/profile';
 import { education, experience, skills, languages, awards } from '../../data/cv';
@@ -59,13 +60,7 @@ const contactLinks = socialLinks(lang);
         )
       }
     </div>
-    {
-      profile.photo ? (
-        <img src={profile.photo} alt={profile.name} class="portrait" />
-      ) : (
-        <div class="portrait hatch" aria-hidden="true" />
-      )
-    }
+    <div class="portrait"><Avatar lang={lang} eager /></div>
   </section>
 
   <Section id="timeline" title={ui.educationExperience} lang={lang} filled={timeline.length > 0}>
@@ -203,10 +198,6 @@ const contactLinks = socialLinks(lang);
   .portrait {
     flex: 1 1 260px;
     max-width: 360px;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: var(--radius);
-    border: 1px solid var(--ln);
   }
   .timeline {
     list-style: none;

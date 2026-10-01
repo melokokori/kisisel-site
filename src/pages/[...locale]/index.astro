@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import Section from '../../components/Section.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import Signal from '../../components/Signal.astro';
+import Avatar from '../../components/Avatar.astro';
 import { localeParams, localePath, t, type Lang } from '../../i18n';
 import { profile } from '../../data/profile';
 import { research } from '../../data/research';
@@ -21,6 +22,7 @@ const { thesis } = research;
 
 <Base lang={lang}>
   <section class="hero">
+    <div class="hero-text">
     {interests.length > 0 && <p class="mono accent">{interests.join(' / ')}</p>}
     <h1>{profile.name}</h1>
     {profile.role[lang] && <p class="role">{profile.role[lang]}</p>}
@@ -29,6 +31,8 @@ const { thesis } = research;
       <a href={localePath(lang, '/projects')} class="btn btn-primary">{ui.nav.projects}</a>
       {profile.cv[lang] && <a href={profile.cv[lang]} class="btn" download>{ui.downloadCv}</a>}
     </div>
+    </div>
+    <div class="hero-avatar"><Avatar lang={lang} eager /></div>
   </section>
 
   <Signal />
@@ -95,10 +99,26 @@ const { thesis } = research;
 
 <style>
   .hero {
-    padding: clamp(48px, 9vw, 88px) 0 40px;
+    padding: clamp(40px, 8vw, 80px) 0 24px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 340px);
+    align-items: center;
+    gap: 48px;
+  }
+  .hero-text {
     display: flex;
     flex-direction: column;
     gap: 28px;
+    min-width: 0;
+  }
+  @media (max-width: 760px) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .hero-avatar {
+      order: -1;
+      width: min(220px, 60%);
+    }
   }
   .hero .mono {
     font-size: 14px;

@@ -15,7 +15,6 @@ export const profile = {
   intro: empty() as L, // Hakkımda sayfasının açılış cümlesi
   bio: [] as L[], // Hakkımda paragrafları (Adli Bilimler → Bilgisayar Müh. hikâyesi); her öğe bir paragraf
   contactNote: empty() as L, // kimlerden haber beklediğin: işbirliği, staj, doktora pozisyonu
-  photo: '', // public/ altındaki yol, ör. '/images/melih.jpg'
   location: empty() as L,
   email: '7melihturgut@gmail.com',
   cvUpdated: '', // ör. '2026-10'
