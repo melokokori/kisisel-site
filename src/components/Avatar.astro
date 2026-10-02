@@ -10,151 +10,36 @@ interface Props {
 }
 
 const { lang, sizes = '(max-width: 760px) 240px, 360px', eager = false } = Astro.props;
-const alt =
-  lang === 'tr' ? `${profile.name} — illüstrasyon portre` : `${profile.name} — illustrated portrait`;
-
-// Göz kapağı geometrisi kaynak görselin (1792×2240) piksel koordinatlarında.
+const alt = lang === 'tr' ? `${profile.name} — portre` : `${profile.name} — portrait`;
 ---
 
-<figure class="avatar" data-avatar>
-  <div class="rig">
-    <img
-      src="/images/avatar-900.webp"
-      srcset="/images/avatar-480.webp 480w, /images/avatar-900.webp 900w"
-      {sizes}
-      width="900"
-      height="1125"
-      {alt}
-      loading={eager ? 'eager' : 'lazy'}
-      fetchpriority={eager ? 'high' : undefined}
-      decoding="async"
-    />
-    <svg viewBox="0 0 1792 2240" aria-hidden="true">
-      <defs>
-        <linearGradient id="lid-l" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#e69e72"></stop>
-          <stop offset="0.6" stop-color="#d88c64"></stop>
-          <stop offset="1" stop-color="#bd765b"></stop>
-        </linearGradient>
-        <linearGradient id="lid-r" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#e0966a"></stop>
-          <stop offset="0.6" stop-color="#d08660"></stop>
-          <stop offset="1" stop-color="#bb7354"></stop>
-        </linearGradient>
-        <filter id="lid-soft" x="-10%" y="-30%" width="120%" height="160%">
-          <feGaussianBlur stdDeviation="4"></feGaussianBlur>
-        </filter>
-      </defs>
-      <g class="lid">
-        <path d="M630 696 C 665 655, 772 650, 808 700 C 772 726, 668 728, 630 696 Z" fill="url(#lid-l)" filter="url(#lid-soft)"></path>
-        <path d="M636 699 C 672 724, 770 724, 802 702" fill="none" stroke="#3a2418" stroke-width="6" stroke-linecap="round"></path>
-      </g>
-      <g class="lid">
-        <path d="M944 700 C 978 650, 1100 652, 1140 696 C 1104 728, 984 728, 944 700 Z" fill="url(#lid-r)" filter="url(#lid-soft)"></path>
-        <path d="M950 702 C 984 724, 1100 724, 1134 699" fill="none" stroke="#3a2418" stroke-width="6" stroke-linecap="round"></path>
-      </g>
-    </svg>
-  </div>
+<figure class="avatar">
+  <img
+    src="/images/avatar-900.webp"
+    srcset="/images/avatar-480.webp 480w, /images/avatar-900.webp 900w"
+    {sizes}
+    width="900"
+    height="1125"
+    {alt}
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : undefined}
+    decoding="async"
+  />
 </figure>
-
-<script>
-  // Rastgele aralıklarla göz kırpma, ara sıra baş sallama; tıklayınca/üzerine gelince selam.
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  document.querySelectorAll<HTMLElement>('[data-avatar]').forEach((el) => {
-    if (reduce.matches) return;
-    const play = (cls: string, ms: number) => {
-      el.classList.remove(cls);
-      void el.offsetWidth; // animasyonu yeniden başlat
-      el.classList.add(cls);
-      window.setTimeout(() => el.classList.remove(cls), ms);
-    };
-    const blink = () => {
-      play('blink', 200);
-      // Bazen çift kırpma
-      if (Math.random() < 0.2) window.setTimeout(() => play('blink', 200), 260);
-      window.setTimeout(blink, 2500 + Math.random() * 4000);
-    };
-    window.setTimeout(blink, 1200 + Math.random() * 1500);
-    const nod = () => {
-      play('nod', 1200);
-      window.setTimeout(nod, 9000 + Math.random() * 6000);
-    };
-    window.setTimeout(nod, 4000);
-    el.addEventListener('pointerenter', () => play('nod', 1200));
-  });
-</script>
 
 <style>
   .avatar {
     margin: 0;
-    position: relative;
     aspect-ratio: 4 / 5;
     overflow: hidden;
     border-radius: var(--radius);
     border: 1px solid var(--ln);
-    background:
-      radial-gradient(70% 55% at 50% 38%, color-mix(in srgb, var(--ac) 22%, transparent), transparent 70%),
-      var(--sf);
+    /* Portrenin kendi zemini (#0b0e17) yüklenirken de aynı renk görünsün */
+    background: #0b0e17;
   }
-  .rig {
-    position: absolute;
-    inset: 0;
-    transform-origin: 50% 85%;
-  }
-  .rig img,
-  .rig svg {
-    position: absolute;
-    inset: 0;
+  .avatar img {
     width: 100%;
     height: 100%;
-  }
-  .lid {
-    transform-box: fill-box;
-    transform-origin: 50% 0;
-    transform: scaleY(0);
-  }
-  :global(.blink) .lid {
-    animation: blink 200ms ease-in-out;
-  }
-  :global(.nod) .rig {
-    animation: nod 1200ms ease-in-out;
-  }
-  @keyframes blink {
-    0%,
-    100% {
-      transform: scaleY(0);
-    }
-    45%,
-    55% {
-      transform: scaleY(1);
-    }
-  }
-  @keyframes nod {
-    0%,
-    100% {
-      transform: translateY(0) rotate(0);
-    }
-    25% {
-      transform: translateY(1.2%) rotate(-0.8deg);
-    }
-    50% {
-      transform: translateY(-0.4%) rotate(0.4deg);
-    }
-    75% {
-      transform: translateY(0.8%) rotate(-0.3deg);
-    }
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .rig {
-      animation: breathe 6s ease-in-out infinite;
-    }
-    :global(.nod) .rig {
-      animation: nod 1200ms ease-in-out;
-    }
-  }
-  @keyframes breathe {
-    50% {
-      transform: translateY(0.5%);
-    }
+    object-fit: cover;
   }
 </style>
