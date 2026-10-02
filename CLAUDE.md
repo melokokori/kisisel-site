@@ -32,6 +32,6 @@ Consult these guides before working on related tasks:
 - Deploy: `main` → Vercel (`kisisel-site`) → https://melihturgut.dev (DNS: Cloudflare, proxy kapalı), branch'ler → preview
 - Üretilen varlıklar (`scripts/render.mjs`, headless Chrome): CV PDF'leri `public/cv/` ← `/cv` (`npm run cv:pdf`), paylaşım kartları `public/og/` ← `/og` (`npm run og`); ikisi birden `npm run assets`. `src/data` değişince yeniden çalıştır, CV için `profile.cvUpdated`'ı güncelle
 - SEO: sitemap (`@astrojs/sitemap`, cv/og hariç), `public/robots.txt`, Base'de canonical + OG + JSON-LD (Person); Vercel Analytics bileşeni Base'de
-- `vercel.json`: eski `kisisel-site-rouge.vercel.app` → `melihturgut.dev` kalıcı yönlendirme
+- Eski `kisisel-site-rouge.vercel.app` ve `www` → `melihturgut.dev` (308): Vercel alan adı ayarlarında (vercel.json'da değil; orada dosya sistemindeki sayfalara uygulanmıyordu)
 - Boş bölümler render edilmez; Projeler/Yazılar sayfaları ve menü öğeleri yalnızca koleksiyonda içerik varsa üretilir
 - Portre: `src/components/Avatar.astro` (webp + SVG göz kapakları, CSS animasyon)
