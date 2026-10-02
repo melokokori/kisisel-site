@@ -51,6 +51,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
   document.querySelector('.theme-toggle')?.addEventListener('click', () => {
     const next = root.dataset.theme === 'light' ? 'dark' : 'light';
     root.dataset.theme = next;
+    document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')!.content = next === 'light' ? '#f5f7fb' : '#0b0e17';
     try {
       localStorage.setItem('theme', next);
     } catch {}

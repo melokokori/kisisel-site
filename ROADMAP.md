@@ -54,7 +54,7 @@ Toplanacaklar:
 
 ### Faz 4 — Kalite ve görünürlük
 - [x] SEO: meta, Open Graph görselleri, `sitemap.xml`, JSON-LD (`Person`)
-- [ ] Erişilebilirlik + performans denetimi (`web-design-guidelines`, Lighthouse ≥ 95)
+- [x] Erişilebilirlik + performans denetimi (`web-design-guidelines`, Lighthouse mobil 98–100, erişilebilirlik/SEO 100)
 - [x] Vercel Analytics (bileşen eklendi; panelden etkinleştirilmeli)
 - [x] Özel alan adı: **melihturgut.dev**
 

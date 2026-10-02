@@ -34,4 +34,4 @@ Consult these guides before working on related tasks:
 - SEO: sitemap (`@astrojs/sitemap`, cv/og hariç), `public/robots.txt`, Base'de canonical + OG + JSON-LD (Person); Vercel Analytics bileşeni Base'de
 - Eski `kisisel-site-rouge.vercel.app` ve `www` → `melihturgut.dev` (308): Vercel alan adı ayarlarında (vercel.json'da değil; orada dosya sistemindeki sayfalara uygulanmıyordu)
 - Boş bölümler render edilmez; Projeler/Yazılar sayfaları ve menü öğeleri yalnızca koleksiyonda içerik varsa üretilir
-- Portre: `src/components/Avatar.astro` (webp + SVG göz kapakları, CSS animasyon)
+- Portre: `src/components/Avatar.astro` — statik webp (Higgsfield `gpt_image_2_5`, resimsel stil, lacivert zemin; kaynak foto Higgsfield media `fa1aefc0…`). Değişince `npm run og`
