@@ -53,10 +53,10 @@ Toplanacaklar:
 - [x] TR/EN dil geçişi
 
 ### Faz 4 — Kalite ve görünürlük
-- [ ] SEO: meta, Open Graph görselleri, `sitemap.xml`, JSON-LD (`Person`, `ScholarlyArticle`)
+- [x] SEO: meta, Open Graph görselleri, `sitemap.xml`, JSON-LD (`Person`)
 - [ ] Erişilebilirlik + performans denetimi (`web-design-guidelines`, Lighthouse ≥ 95)
-- [ ] Vercel Analytics
-- [ ] Özel alan adı (ör. `melihturgut.com` / `.dev`)
+- [x] Vercel Analytics (bileşen eklendi; panelden etkinleştirilmeli)
+- [x] Özel alan adı: **melihturgut.dev**
 
 ### Faz 5 — Sürdürme
 - [ ] Ayda 1 yazı veya proje güncellemesi

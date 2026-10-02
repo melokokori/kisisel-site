@@ -4,7 +4,13 @@ import ProjectCard from '../../../components/ProjectCard.astro';
 import { localeParams, t, type Lang } from '../../../i18n';
 import { getProjects } from '../../../lib/content';
 
-export const getStaticPaths = localeParams;
+// İçerik yoksa sayfa hiç üretilmez (menüde de görünmez)
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    localeParams().map(async (p) => ((await getProjects(p.props.lang)).length > 0 ? p : null)),
+  );
+  return paths.filter((p) => p !== null);
+}
 
 const { lang } = Astro.props as { lang: Lang };
 const ui = t(lang);
@@ -18,30 +24,22 @@ const tags = [...new Set(projects.flatMap((p) => p.data.tags))].sort((a, b) => a
   </section>
 
   {
-    projects.length === 0 ? (
-      <p class="empty">{ui.emptySection}</p>
-    ) : (
-      <>
-        {tags.length > 1 && (
-          <div class="filters" role="group" aria-label={ui.filterLabel}>
-            <button type="button" data-tag="" aria-pressed="true">
-              {ui.filterAll}
-            </button>
-            {tags.map((tag) => (
-              <button type="button" data-tag={tag} aria-pressed="false">
-                {tag}
-              </button>
-            ))}
-          </div>
-        )}
-        <div class="grid-cards list">
-          {projects.map((p) => (
-            <ProjectCard lang={lang} slug={p.slug} {...p.data} />
-          ))}
-        </div>
-      </>
+    tags.length > 1 && (
+      <div class="filters" role="group" aria-label={ui.filterLabel}>
+        <button type="button" data-tag="" aria-pressed="true">
+          {ui.filterAll}
+        </button>
+        {tags.map((tag) => (
+          <button type="button" data-tag={tag} aria-pressed="false">
+            {tag}
+          </button>
+        ))}
+      </div>
     )
   }
+  <div class="grid-cards list">
+    {projects.map((p) => <ProjectCard lang={lang} slug={p.slug} {...p.data} />)}
+  </div>
 </Base>
 
 <script>
@@ -89,9 +87,6 @@ const tags = [...new Set(projects.flatMap((p) => p.data.tags))].sort((a, b) => a
   }
   .list {
     padding-bottom: 88px;
-  }
-  .empty {
-    margin-bottom: 88px;
   }
   [hidden] {
     display: none !important;

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /cv/
+Disallow: /en/cv/
+Disallow: /og/
+Disallow: /en/og/
+
+Sitemap: https://melihturgut.dev/sitemap-index.xml

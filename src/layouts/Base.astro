@@ -2,8 +2,10 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Analytics from '@vercel/analytics/astro';
 import { localePath, type Lang } from '../i18n';
 import { profile } from '../data/profile';
+import { research } from '../data/research';
 
 interface Props {
   lang: Lang;
@@ -16,6 +18,23 @@ const pageTitle = title ? `${title} — ${profile.name}` : profile.name;
 
 // Aynı sayfanın diğer dildeki karşılığı
 const path = Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/';
+const abs = (p: string) => new URL(p, Astro.site).href;
+const canonical = abs(Astro.url.pathname);
+const ogImage = abs(`/og/og-${lang}.png`);
+
+// Arama motorları için kişi bilgisi (schema.org/Person)
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  url: abs('/'),
+  image: abs('/images/avatar-900.webp'),
+  jobTitle: profile.role[lang],
+  email: profile.email ? `mailto:${profile.email}` : undefined,
+  affiliation: { '@type': 'CollegeOrUniversity', name: lang === 'tr' ? 'Üsküdar Üniversitesi' : 'Üsküdar University' },
+  knowsAbout: research.interests.map((i) => i.title[lang]),
+  sameAs: Object.values(profile.links).filter(Boolean),
+};
 ---
 
 <!doctype html>
@@ -26,9 +45,25 @@ const path = Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/';
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{pageTitle}</title>
     {description && <meta name="description" content={description} />}
-    <link rel="alternate" hreflang="tr" href={localePath('tr', path)} />
-    <link rel="alternate" hreflang="en" href={localePath('en', path)} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="tr" href={abs(localePath('tr', path))} />
+    <link rel="alternate" hreflang="en" href={abs(localePath('en', path))} />
+    <link rel="alternate" hreflang="x-default" href={abs(localePath('tr', path))} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="theme-color" content="#0b0e17" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={profile.name} />
+    <meta property="og:title" content={pageTitle} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={lang === 'tr' ? 'tr_TR' : 'en_US'} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
     <script is:inline>
       // Tema: kayıtlı tercih > cihaz ayarı > koyu. Boyamadan önce uygulanır (flaş olmasın).
       (function () {
@@ -49,5 +84,6 @@ const path = Astro.url.pathname.replace(/^\/en(?=\/|$)/, '') || '/';
       </main>
       <Footer lang={lang} />
     </div>
+    <Analytics />
   </body>
 </html>
