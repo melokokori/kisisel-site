@@ -236,13 +236,6 @@ p {
   text-decoration: none;
 }
 
-.empty {
-  padding: 28px;
-  border: 1px dashed var(--ln2);
-  border-radius: var(--radius);
-  color: var(--mu);
-}
-
 .sr-only {
   position: absolute;
   width: 1px;

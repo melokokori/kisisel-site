@@ -3,7 +3,13 @@ import Base from '../../../layouts/Base.astro';
 import { localeParams, localePath, t, type Lang } from '../../../i18n';
 import { getPosts, formatDate, readingTime } from '../../../lib/content';
 
-export const getStaticPaths = localeParams;
+// İçerik yoksa sayfa hiç üretilmez (menüde de görünmez)
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    localeParams().map(async (p) => ((await getPosts(p.props.lang)).length > 0 ? p : null)),
+  );
+  return paths.filter((p) => p !== null);
+}
 
 const { lang } = Astro.props as { lang: Lang };
 const ui = t(lang);
@@ -15,11 +21,7 @@ const posts = await getPosts(lang);
     <h1 class="display">{ui.nav.writing}</h1>
   </section>
 
-  {
-    posts.length === 0 ? (
-      <p class="empty">{ui.emptySection}</p>
-    ) : (
-      <ul class="posts">
+  <ul class="posts">
         {posts.map((p) => (
           <li>
             <a href={localePath(lang, `/writing/${p.slug}`)} class="title">
@@ -32,17 +34,12 @@ const posts = await getPosts(lang);
             </span>
           </li>
         ))}
-      </ul>
-    )
-  }
+  </ul>
 </Base>
 
 <style>
   .intro {
     padding: 72px 0 40px;
-  }
-  .empty {
-    margin-bottom: 88px;
   }
   .posts {
     list-style: none;
