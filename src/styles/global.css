@@ -45,6 +45,12 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a,
+button {
+  touch-action: manipulation;
 }
 
 body {
@@ -137,6 +143,7 @@ p {
 .mono {
   font-family: var(--mono);
   font-size: 13px;
+  font-variant-numeric: tabular-nums;
 }
 
 .muted {
@@ -234,6 +241,27 @@ p {
   font-size: 15px;
   padding: 12px 0;
   text-decoration: none;
+}
+
+.skip-link {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--ac);
+  color: var(--on);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+.skip-link:focus-visible {
+  transform: none;
+}
+
+main:focus {
+  outline: none;
 }
 
 .sr-only {

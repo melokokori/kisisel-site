@@ -26,6 +26,7 @@ const alt =
       height="1125"
       {alt}
       loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : undefined}
       decoding="async"
     />
     <svg viewBox="0 0 1792 2240" aria-hidden="true">
