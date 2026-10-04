@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="180" height="180">
+  <!-- iOS köşeleri kendisi yuvarlar; zemin kenara kadar uzanır, harf biraz küçültülür -->
+  <rect width="160" height="160" fill="#0b0e17"/>
+  <g fill="#7aa7ff" stroke="#7aa7ff" stroke-width="4" stroke-linejoin="miter" stroke-miterlimit="3" transform="translate(80 80) scale(0.82) translate(-80 -79.5)">
+  <polygon points="40,24 47,47 41,122 34,135 32,135"/>
+  <polygon points="40,24 80,76 80,88 47,47"/>
+  <polygon points="57,88 78.5,112 34,135 41,123 57,113.5"/>
+  <polygon points="120,24 113,47 119,122 126,135 128,135"/>
+  <polygon points="120,24 80,76 80,88 113,47"/>
+  <polygon points="103,88 81.5,112 126,135 119,123 103,113.5"/>
+  </g>
+</svg>

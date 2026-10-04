@@ -11,6 +11,7 @@
     "check": "astro check",
     "cv:pdf": "node scripts/render.mjs cv",
     "og": "node scripts/render.mjs og",
+    "icon": "node scripts/render.mjs icon",
     "assets": "node scripts/render.mjs",
     "preview": "astro preview",
     "astro": "astro"

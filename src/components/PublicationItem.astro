@@ -14,7 +14,7 @@ const lastName = profile.name.split(' ').at(-1) ?? '';
 const href = pub.doi ? `https://doi.org/${pub.doi}` : pub.url || pub.pdf;
 ---
 
-<li class="card pub">
+<li class="card card-hover pub">
   <span class="mono accent year">{pub.year}</span>
   <span class="text">
     {href ? <a href={href}>{pub.title}</a> : pub.title}

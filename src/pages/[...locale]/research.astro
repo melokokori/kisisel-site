@@ -17,6 +17,14 @@ const thesisMeta = [
   { label: ui.institution, value: thesis.institution },
   { label: ui.started, value: thesis.started },
 ].filter((m) => m.value);
+// Görünen bölümler sırayla numaralanır
+let n = 0;
+const next = () => String(++n).padStart(2, '0');
+const num = {
+  interests: research.interests.length > 0 ? next() : undefined,
+  thesis: thesis.title[lang] ? next() : undefined,
+  publications: sortedPubs.length > 0 ? next() : undefined,
+};
 const scholarLinks = [
   { label: 'Google Scholar', href: profile.links.scholar },
   { label: 'ORCID', href: profile.links.orcid },
@@ -29,11 +37,11 @@ const scholarLinks = [
     {research.summary[lang] && <p class="lead">{research.summary[lang]}</p>}
   </section>
 
-  <Section id="interests" title={ui.interests} filled={research.interests.length > 0} flush>
+  <Section id="interests" title={ui.interests} filled={research.interests.length > 0} flush num={num.interests}>
     <div class="grid-cards">
       {
-        research.interests.map((i) => (
-          <article class="card interest">
+        research.interests.map((i, idx) => (
+          <article class="card interest" id={`interest-${idx + 1}`}>
             <h3>{i.title[lang]}</h3>
             <p>{i.description[lang]}</p>
             {i.keywords.length > 0 && (
@@ -49,7 +57,7 @@ const scholarLinks = [
     </div>
   </Section>
 
-  {thesis.title[lang] && (<Section id="thesis" title={ui.thesis} filled>
+  {thesis.title[lang] && (<Section id="thesis" title={ui.thesis} filled num={num.thesis}>
     <div class="card thesis">
       <span class="mono accent">{ui.thesisOngoing}</span>
       <h3>{thesis.title[lang]}</h3>
@@ -84,7 +92,7 @@ const scholarLinks = [
     </div>
   </Section>)}
 
-  <Section id="publications" title={ui.publications} filled={sortedPubs.length > 0}>
+  <Section id="publications" title={ui.publications} filled={sortedPubs.length > 0} num={num.publications}>
     {
       scholarLinks.length > 0 && (
         <p class="profiles">
@@ -104,7 +112,7 @@ const scholarLinks = [
 
 <style>
   .intro {
-    padding: 72px 0 56px;
+    padding: 64px 0 48px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -114,6 +122,17 @@ const scholarLinks = [
     display: flex;
     flex-direction: column;
     gap: 10px;
+  }
+  .interest {
+    scroll-margin-top: 24px;
+    transition:
+      border-color 0.4s,
+      box-shadow 0.4s;
+  }
+  /* Ana sayfadaki sinyalden gelince ilgili kart vurgulanır */
+  .interest:target {
+    border-color: color-mix(in oklab, var(--ac) 55%, var(--ln2));
+    box-shadow: var(--glow);
   }
   .interest h3 {
     font-size: 20px;

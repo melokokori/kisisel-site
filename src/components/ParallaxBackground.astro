@@ -1,0 +1,150 @@
+---
+// Ana sayfanın parallax arka planı: ekrana sabit 4 katman, kaydırınca farklı hızda kayar
+// (uzak yavaş, yakın hızlı); masaüstünde fareye de hafifçe tepki verir.
+// Şekiller logodan türetildi: üstteki dev V logonun çapraz kolları, Λ alttaki iç kıvrım,
+// küçük üçgen çiftleri logonun iç üçgenleri. Her katmanda --d: kaydırmada toplam yükselme,
+// --m: fareyle en fazla kayma.
+
+// Logonun iç üçgen çifti (160'lık logo ızgarasından): dikey kenar + 1.1 eğimli hipotenüs
+const pair = '0,0 0,25 21.5,24|46,0 46,25 24.5,24';
+const nearShards = [
+  { x: 34, y: 300, s: 2 },
+  { x: 1330, y: 150, s: 1.4 },
+  { x: 470, y: 96, s: 1.1 },
+  { x: 1000, y: 770, s: 1.6 },
+  { x: 70, y: 1000, s: 2.4 },
+  { x: 1250, y: 880, s: 1.8 },
+  { x: 640, y: 1260, s: 2 },
+];
+---
+
+<div class="pbg" aria-hidden="true">
+  <div class="layer glow" style="--d: 90px; --m: 10px"></div>
+
+  <svg class="layer far" style="--d: 200px; --m: 16px" viewBox="0 0 1440 1400" preserveAspectRatio="xMaxYMin slice">
+    <!-- logonun üst V'si: iki çapraz kol, ortada çentikle buluşur -->
+    <polygon points="720,-120 820,-120 1160,322 1160,452"></polygon>
+    <polygon points="1600,-120 1500,-120 1160,322 1160,452"></polygon>
+    <!-- logonun iç Λ kıvrımı -->
+    <polygon points="260,640 700,866 580,866 260,702 -60,866 -180,866"></polygon>
+    <polygon points="1100,1050 1440,1225 1340,1225 1100,1102 860,1225 760,1225"></polygon>
+  </svg>
+
+  <div class="layer grid" style="--d: 300px; --m: 22px"></div>
+
+  <svg class="layer near" style="--d: 480px; --m: 34px" viewBox="0 0 1440 1400" preserveAspectRatio="xMaxYMin slice">
+    {
+      nearShards.map(({ x, y, s }) => (
+        <g transform={`translate(${x} ${y}) scale(${s})`}>
+          {pair.split('|').map((points) => (
+            <polygon points={points} />
+          ))}
+        </g>
+      ))
+    }
+  </svg>
+</div>
+
+<script>
+  // Fare parallax'ı: yalnızca fare/kalem olan cihazlarda ve hareket azaltma kapalıyken
+  const root = document.querySelector<HTMLElement>('.pbg');
+  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (root && finePointer && !reduce) {
+    let frame = 0;
+    let x = 0;
+    let y = 0;
+    addEventListener(
+      'pointermove',
+      (e) => {
+        x = (e.clientX / innerWidth) * 2 - 1;
+        y = (e.clientY / innerHeight) * 2 - 1;
+        frame ||= requestAnimationFrame(() => {
+          frame = 0;
+          root.style.setProperty('--mx', x.toFixed(3));
+          root.style.setProperty('--my', y.toFixed(3));
+        });
+      },
+      { passive: true },
+    );
+  }
+</script>
+
+<style>
+  .pbg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .layer {
+    position: absolute;
+    /* Fareyle --m kadar kaydığı için her yandan o kadar taşar (kenar açığa çıkmasın);
+       kaydırınca --d kadar yükseldiği için alttan da o kadar uzun */
+    top: calc(-1 * var(--m));
+    left: calc(-1 * var(--m));
+    width: calc(100% + 2 * var(--m));
+    height: calc(100lvh + var(--d) + 2 * var(--m));
+    /* Fare: imlecin tersine kayar (derinlik hissi); geçiş gecikmesi hareketi yumuşatır */
+    transform: translate3d(calc(var(--mx, 0) * var(--m) * -1), calc(var(--my, 0) * var(--m) * -1), 0);
+    transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+    will-change: transform;
+  }
+
+  /* 1 · uzak: ışık lekeleri */
+  .glow {
+    background:
+      radial-gradient(640px 480px at 78% 16%, color-mix(in oklab, var(--ac) 16%, transparent), transparent 70%),
+      radial-gradient(520px 420px at 8% 78%, color-mix(in oklab, var(--ac) 9%, transparent), transparent 70%);
+  }
+
+  /* 2 · büyük soluk şekiller */
+  .far polygon {
+    fill: color-mix(in oklab, var(--ac) 6%, transparent);
+    stroke: color-mix(in oklab, var(--ac) 22%, transparent);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* 3 · nokta ızgarası, kenarlara doğru söner */
+  .grid {
+    background: radial-gradient(circle, color-mix(in oklab, var(--ln2) 60%, var(--mu)) 1px, transparent 1.6px) 0 0 / 28px
+      28px;
+    mask-image: radial-gradient(ellipse 70% 55% at 60% 30%, #000 10%, transparent 80%);
+    opacity: 0.75;
+  }
+
+  /* 4 · yakın: küçük keskin üçgen çiftleri */
+  .near polygon {
+    fill: color-mix(in oklab, var(--ac) 12%, transparent);
+    stroke: color-mix(in oklab, var(--ac) 45%, transparent);
+    stroke-width: 1;
+    stroke-linejoin: miter;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Kaydırma parallax'ı: tamamen CSS; desteklemeyen tarayıcıda katmanlar durağan */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      .layer {
+        animation: pbg-rise linear both;
+      }
+      /* Zaman çizelgesi ayrı kuralda: küçültücü bunu `animation` kısaltmasına katarsa
+         tarayıcı bildirimi geçersiz sayıyor */
+      .pbg > .layer {
+        animation-timeline: scroll(root);
+      }
+    }
+  }
+  @keyframes pbg-rise {
+    to {
+      translate: 0 calc(-1 * var(--d));
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .layer {
+      transition: none;
+    }
+  }
+</style>

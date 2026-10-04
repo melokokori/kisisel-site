@@ -16,7 +16,7 @@ const { lang, slug, title, summary, date, role, tags, cover } = Astro.props;
 const meta = [date.getFullYear(), role].filter(Boolean).join(' · ');
 ---
 
-<article class="card project" data-tags={tags.join('|')}>
+<article class="card card-hover project" data-tags={tags.join('|')}>
   {
     cover ? (
       <img src={cover} alt="" class="cover" width="1600" height="900" loading="lazy" decoding="async" />
@@ -47,9 +47,6 @@ const meta = [date.getFullYear(), role].filter(Boolean).join(' · ');
     display: flex;
     flex-direction: column;
   }
-  .project:hover {
-    border-color: var(--ln2);
-  }
   .cover {
     aspect-ratio: 16 / 9;
     width: 100%;
@@ -68,6 +65,10 @@ const meta = [date.getFullYear(), role].filter(Boolean).join(' · ');
   h3 a {
     color: var(--tx);
     text-decoration: none;
+    transition: color 0.2s;
+  }
+  .project:hover h3 a {
+    color: var(--ac);
   }
   /* Tüm kart tıklanabilir */
   h3 a::after {

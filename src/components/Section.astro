@@ -8,9 +8,11 @@ interface Props {
   more?: { href: string; label: string };
   /** Üst çizgisiz (sayfanın ilk bölümü için). */
   flush?: boolean;
+  /** Başlığın üstündeki sıra numarası, ör. "01". */
+  num?: string;
 }
 
-const { id, title, filled, more, flush = false } = Astro.props;
+const { id, title, filled, more, flush = false, num } = Astro.props;
 ---
 
 {
@@ -18,11 +20,16 @@ const { id, title, filled, more, flush = false } = Astro.props;
     <section id={id} aria-labelledby={`${id}-title`} class:list={['section', { flush }]}>
       <div class="section-head">
         <h2 id={`${id}-title`} class="h2">
+          {num && (
+            <span class="num" aria-hidden="true">
+              {num}
+            </span>
+          )}
           {title}
         </h2>
         {more && (
           <a href={more.href} class="link-arrow">
-            {more.label} →
+            {more.label} <span class="arrow" aria-hidden="true">→</span>
           </a>
         )}
       </div>
