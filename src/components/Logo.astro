@@ -1,6 +1,7 @@
 ---
-// Monogram: "M" harfi, ortası taban çizgisinin altına inen bir sinyal atışı olarak çizilir.
-// Aynı şekil favicon'da (public/favicon.svg) ve iOS ikonunda (scripts/apple-touch-icon.svg) kullanılır.
+// Monogram: geometrik "M". Dış bacaklar, iki çapraz kol ve bacakların arasında
+// yukarı bakan bir iç kıvrım (Λ); kullanıcının verdiği referanstan ölçülerek çizildi.
+// Aynı şekil favicon'da (public/favicon.svg) ve iOS ikonunda (scripts/apple-touch-icon.svg).
 interface Props {
   size?: number;
 }
@@ -8,26 +9,35 @@ interface Props {
 const { size = 32 } = Astro.props;
 ---
 
-<svg class="logo" viewBox="0 0 32 32" width={size} height={size} aria-hidden="true">
-  <rect x="0.5" y="0.5" width="31" height="31" rx="8" class="tile"></rect>
-  <polyline points="4,21 8.5,21 11,8 16,24 21,8 23.5,21 28,21" class="mark"></polyline>
+<svg class="logo" viewBox="0 0 160 160" width={size} height={size} aria-hidden="true">
+  <rect x="2" y="2" width="156" height="156" rx="38" class="tile"></rect>
+  <g class="mark">
+    <polygon points="40,24 47,47 41,122 34,135 32,135" />
+    <polygon points="40,24 80,76 80,88 47,47" />
+    <polygon points="57,88 78.5,112 34,135 41,123 57,113.5" />
+    <polygon points="120,24 113,47 119,122 126,135 128,135" />
+    <polygon points="120,24 80,76 80,88 113,47" />
+    <polygon points="103,88 81.5,112 126,135 119,123 103,113.5" />
+  </g>
 </svg>
 
 <style>
+  /* Her iki temada da aynı: koyu kare üzerinde mavi M (favicon ile birebir) */
   .logo {
     display: block;
     flex-shrink: 0;
   }
   .tile {
-    fill: var(--sf);
-    stroke: var(--ln2);
-    stroke-width: 1;
+    fill: #0b0e17;
+    stroke: #2e3752;
+    stroke-width: 4;
   }
+  /* Küçük boyutlarda kollar incelmesin diye aynı renkte kontur: harfi dolgunlaştırır */
   .mark {
-    fill: none;
-    stroke: var(--ac);
-    stroke-width: 2.4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    fill: #7aa7ff;
+    stroke: #7aa7ff;
+    stroke-width: 6;
+    stroke-linejoin: miter;
+    stroke-miterlimit: 3;
   }
 </style>

@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Section from '../../components/Section.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
-import Signal from '../../components/Signal.astro';
+import InterestList from '../../components/InterestList.astro';
 import Avatar from '../../components/Avatar.astro';
 import EmailActions from '../../components/EmailActions.astro';
 import { localeParams, localePath, t, type Lang } from '../../i18n';
@@ -63,7 +63,7 @@ const num = {
     <div class="hero-avatar"><Avatar lang={lang} eager /></div>
   </section>
 
-  <Signal lang={lang} />
+  <InterestList lang={lang} />
 
   <Section
     id="featured"
