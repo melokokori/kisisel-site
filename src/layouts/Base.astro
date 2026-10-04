@@ -90,6 +90,8 @@ const personLd = {
   </head>
   <body class="site">
     <a href="#main" class="skip-link">{t(lang).skipToContent}</a>
+    <!-- Sayfaya özel, ekrana sabit dekor katmanları (ör. ana sayfanın parallax arka planı) -->
+    <slot name="background" />
     <div class="wrap">
       <Header lang={lang} path={path} />
       <main id="main" tabindex="-1">

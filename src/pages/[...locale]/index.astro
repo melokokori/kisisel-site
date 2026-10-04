@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import Section from '../../components/Section.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import InterestList from '../../components/InterestList.astro';
+import ParallaxBackground from '../../components/ParallaxBackground.astro';
 import Avatar from '../../components/Avatar.astro';
 import EmailActions from '../../components/EmailActions.astro';
 import { localeParams, localePath, t, type Lang } from '../../i18n';
@@ -39,8 +40,8 @@ const num = {
 ---
 
 <Base lang={lang}>
+  <ParallaxBackground slot="background" />
   <section class="hero">
-    <div class="hero-bg" aria-hidden="true"></div>
     <div class="hero-text">
       {
         profile.now[lang] && (
@@ -138,8 +139,6 @@ const num = {
 
 <style>
   .hero {
-    position: relative;
-    isolation: isolate;
     padding: clamp(32px, 7vw, 72px) 0 8px;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(220px, 340px);
@@ -152,40 +151,18 @@ const num = {
     gap: 26px;
     min-width: 0;
   }
-  /* En arka katman: portrenin arkasında yoğunlaşan, kenarlara doğru sönen ölçüm ızgarası */
-  .hero-bg {
-    position: absolute;
-    z-index: -1;
-    top: -160px;
-    left: calc(-1 * var(--gutter));
-    right: calc(-1 * var(--gutter));
-    height: calc(100% + 280px);
-    background: radial-gradient(circle, color-mix(in oklab, var(--ln2) 60%, var(--mu)) 1px, transparent 1.6px) 0 0 / 28px
-      28px;
-    mask-image: radial-gradient(ellipse 50% 65% at 62% 42%, #000 25%, transparent 78%);
-    opacity: 0.9;
-    pointer-events: none;
-  }
-  @media (max-width: 760px) {
-    .hero-bg {
-      mask-image: radial-gradient(ellipse 80% 45% at 30% 22%, #000 15%, transparent 75%);
-    }
-  }
 
-  /* Parallax: kaydırırken katmanlar farklı hızda hareket eder. Tamamen CSS (kaydırma
+  /* İçerik parallax'ı (arka plan katmanları ParallaxBackground'da): portre biraz geride kalır,
+     metin ekrandan çıkarken söner. Tamamen CSS (kaydırma
      zaman çizelgesi); desteklemeyen tarayıcıda ve hareket azaltma açıkken sayfa durağandır. */
   @media (prefers-reduced-motion: no-preference) {
     @supports (animation-timeline: scroll()) {
-      .hero-bg,
       .hero-text,
       .hero-avatar {
         animation-timing-function: linear;
         animation-fill-mode: both;
         animation-timeline: scroll(root);
         animation-range: 0 100vh;
-      }
-      .hero-bg {
-        animation-name: depth-far;
       }
       .hero-avatar {
         animation-name: depth-mid;
@@ -197,11 +174,6 @@ const num = {
         animation-timeline: view();
         animation-range: exit 0% exit 100%;
       }
-    }
-  }
-  @keyframes depth-far {
-    to {
-      translate: 0 160px;
     }
   }
   @keyframes depth-mid {
