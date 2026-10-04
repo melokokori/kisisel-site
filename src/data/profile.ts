@@ -12,6 +12,11 @@ export const profile = {
     tr: 'Yapay zekâ, veri bilimi ve web teknolojileri üzerine çalışıyorum.',
     en: 'I work on artificial intelligence, data science and web technologies.',
   } as L,
+  // ana sayfadaki "şu an" durum satırı; değiştikçe güncelle (boşsa gizlenir)
+  now: {
+    tr: 'Tez konusu belirleme aşamasında',
+    en: 'Defining my thesis topic',
+  } as L,
   // Hakkımda sayfasının açılış cümlesi
   intro: {
     tr: 'Merhaba, ben Melih. Adli bilimlerden bilgisayar mühendisliğine uzanan bir yolda, veriden öğrenen sistemler ve web teknolojileri üzerine çalışıyorum.',

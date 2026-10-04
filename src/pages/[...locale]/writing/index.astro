@@ -62,6 +62,10 @@ const posts = await getPosts(lang);
     font-size: clamp(20px, 2.6vw, 26px);
     font-weight: 600;
     letter-spacing: -0.01em;
+    transition: color 0.2s;
+  }
+  .title:hover {
+    color: var(--ac);
   }
   .posts p {
     color: var(--tx2);

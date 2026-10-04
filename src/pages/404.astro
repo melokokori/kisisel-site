@@ -1,0 +1,60 @@
+---
+// Bulunamayan sayfa. Vercel statik çıktıda 404.html'i kendiliğinden sunar.
+import Base from '../layouts/Base.astro';
+import { localePath, t } from '../i18n';
+
+const tr = t('tr');
+const en = t('en');
+---
+
+<Base lang="tr" title={tr.notFoundTitle} noindex>
+  <section class="nf">
+    <span class="code mono accent">404</span>
+    <!-- Düz hat: sinyal yok -->
+    <svg viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden="true">
+      <polyline points="0,20 150,20 160,17 170,23 180,20 400,20"></polyline>
+    </svg>
+    <h1 class="display">{tr.notFoundTitle}</h1>
+    <p class="lead">{tr.notFoundText}</p>
+    <p class="en muted" lang="en">{en.notFoundTitle} — {en.notFoundText}</p>
+    <div class="actions">
+      <a href={localePath('tr')} class="btn btn-primary">{tr.backHome}</a>
+      <a href={localePath('en')} class="btn" lang="en" hreflang="en">{en.backHome}</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    padding: clamp(48px, 10vw, 112px) 0 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .code {
+    font-size: 14px;
+  }
+  svg {
+    width: min(100%, 520px);
+    height: 40px;
+    overflow: visible;
+  }
+  polyline {
+    fill: none;
+    stroke: var(--ac);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+    filter: var(--glow-line);
+    opacity: 0.8;
+  }
+  .en {
+    font-size: 15px;
+    max-width: 60ch;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+</style>

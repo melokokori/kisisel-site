@@ -58,6 +58,12 @@ Toplanacaklar:
 - [x] Vercel Analytics (bileşen eklendi; panelden etkinleştirilmeli)
 - [x] Özel alan adı: **melihturgut.dev**
 
+### Faz 4.5 — Tasarım cilası
+- [x] A: mobil başlık, boşluklar, Hakkımda iki sütun (yapışkan künye), yanıltıcı bağlantı etiketi
+- [x] B: "şu an" satırı, ilgi alanlarını gösteren sinyal, bölüm numaraları, Luminol ışıması (adli bilimler göndermesi yok)
+- [x] C: JS'siz sayfa geçişleri, üzerine gelme efektleri, e-postayı kopyala, 404 sayfası
+- [ ] D: başlıklarda ikinci (editoryal serif) yazı tipi — ayrı branch'te denenecek
+
 ### Faz 5 — Sürdürme
 - [ ] Ayda 1 yazı veya proje güncellemesi
 - [ ] Her dönem sonu CV + yayın listesi güncellemesi

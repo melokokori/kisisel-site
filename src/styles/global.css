@@ -13,6 +13,12 @@
   --mu: #98a1ba;
   --ac: #7aa7ff;
   --on: #0b0e17;
+  /* Luminol ışıması: koyu temada vurgu rengi hafifçe parlar */
+  --glow: 0 0 0 1px color-mix(in oklab, var(--ac) 35%, transparent),
+    0 8px 32px -8px color-mix(in oklab, var(--ac) 45%, transparent);
+  --glow-line: drop-shadow(0 0 6px color-mix(in oklab, var(--ac) 70%, transparent));
+  --halo: color-mix(in oklab, var(--ac) 9%, transparent);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 
   --font: 'Geist Variable', system-ui, sans-serif;
   --mono: 'Geist Mono Variable', ui-monospace, monospace;
@@ -34,6 +40,10 @@
   --mu: #5a6380;
   --ac: #2f5bd3;
   --on: #ffffff;
+  --glow: 0 0 0 1px color-mix(in oklab, var(--ac) 25%, transparent),
+    0 10px 28px -12px color-mix(in oklab, var(--ac) 35%, transparent);
+  --glow-line: none;
+  --halo: color-mix(in oklab, var(--ac) 6%, transparent);
   color-scheme: light;
 }
 
@@ -62,12 +72,22 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+body.site {
+  background:
+    radial-gradient(1100px 520px at 72% -120px, var(--halo), transparent 70%) no-repeat,
+    var(--bg);
+}
+
 a {
   color: var(--ac);
   text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition:
+    color 0.2s,
+    text-decoration-color 0.2s;
 }
 a:hover {
-  opacity: 0.8;
+  text-decoration-color: currentColor;
 }
 
 :focus-visible {
@@ -102,7 +122,7 @@ p {
 }
 
 .section {
-  padding: 72px 0;
+  padding: 64px 0;
   border-top: 1px solid var(--ln);
 }
 
@@ -113,6 +133,16 @@ p {
   align-items: baseline;
   gap: 16px;
   margin-bottom: 32px;
+}
+
+.num {
+  display: block;
+  margin-bottom: 10px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--ac);
 }
 
 .grid-cards {
@@ -191,6 +221,22 @@ p {
   border: 1px solid var(--ln);
   border-radius: var(--radius);
 }
+/* Etkileşimli kart: üzerine gelince kenar vurgu rengine döner ve hafifçe parlar */
+.card-hover {
+  transition:
+    border-color 0.25s,
+    box-shadow 0.25s,
+    transform 0.25s var(--ease);
+}
+.card-hover:hover {
+  border-color: color-mix(in oklab, var(--ac) 45%, var(--ln2));
+  box-shadow: var(--glow);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .card-hover:hover {
+    transform: translateY(-2px);
+  }
+}
 
 .hatch {
   background: repeating-linear-gradient(135deg, var(--sf2) 0 10px, var(--sf) 10px 20px);
@@ -229,6 +275,14 @@ p {
   border: 1px solid var(--ln2);
   color: var(--tx);
   background: transparent;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s,
+    box-shadow 0.25s,
+    transform 0.2s var(--ease);
+}
+.btn:hover {
+  border-color: var(--ac);
 }
 .btn-primary {
   background: var(--ac);
@@ -236,11 +290,28 @@ p {
   color: var(--on);
   font-weight: 600;
 }
+.btn-primary:hover {
+  background: color-mix(in oklab, var(--ac) 88%, var(--tx));
+  box-shadow: var(--glow);
+}
+.btn:active {
+  transform: scale(0.98);
+}
 
 .link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
   font-size: 15px;
   padding: 12px 0;
   text-decoration: none;
+}
+.link-arrow .arrow {
+  transition: transform 0.25s var(--ease);
+}
+.link-arrow:hover .arrow {
+  transform: translateX(4px);
 }
 
 .skip-link {
@@ -276,5 +347,34 @@ main:focus {
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
+  }
+
+  /* Sayfa geçişi: başlık ve alt bilgi yerinde kalır, içerik yumuşakça değişir */
+  @view-transition {
+    navigation: auto;
+  }
+  .site-header {
+    view-transition-name: site-header;
+  }
+  main {
+    view-transition-name: main;
+  }
+  ::view-transition-old(main) {
+    animation: vt-out 0.18s ease-in both;
+  }
+  ::view-transition-new(main) {
+    animation: vt-in 0.32s var(--ease) both;
+  }
+  @keyframes vt-out {
+    to {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+  @keyframes vt-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
   }
 }

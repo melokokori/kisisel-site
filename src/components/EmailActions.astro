@@ -1,0 +1,86 @@
+---
+// E-posta adresi + "gönder" ve "kopyala" butonları. Kopyala butonu yalnızca
+// panoya yazma destekleniyorsa görünür (JS yoksa gizli kalır).
+import { t, type Lang } from '../i18n';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const ui = t(lang);
+---
+
+{
+  profile.email && (
+    <div class="email-actions">
+      <a href={`mailto:${profile.email}`} class="email mono">
+        {profile.email}
+      </a>
+      <div class="row">
+        <a href={`mailto:${profile.email}`} class="btn btn-primary">
+          {ui.sendEmail}
+        </a>
+        <button type="button" class="btn copy-email" data-email={profile.email} data-done={ui.copied} aria-live="polite" hidden>
+          {ui.copyEmail}
+        </button>
+        <slot />
+      </div>
+    </div>
+  )
+}
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.copy-email').forEach((btn) => {
+    if (!navigator.clipboard) return;
+    btn.hidden = false;
+    const label = btn.textContent;
+    let timer: number | undefined;
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.email ?? '');
+      } catch {
+        return;
+      }
+      btn.textContent = `${btn.dataset.done} ✓`;
+      btn.classList.add('done');
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        btn.textContent = label;
+        btn.classList.remove('done');
+      }, 2000);
+    });
+  });
+</script>
+
+<style>
+  .email-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .email {
+    align-self: flex-start;
+    font-size: clamp(18px, 3vw, 28px);
+    padding: 4px 0;
+    overflow-wrap: anywhere;
+    color: var(--tx);
+    text-decoration-color: var(--ln2);
+  }
+  .email:hover {
+    color: var(--ac);
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .copy-email {
+    min-width: 11ch;
+  }
+  .copy-email.done {
+    border-color: var(--ac);
+    color: var(--ac);
+  }
+</style>

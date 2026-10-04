@@ -4,9 +4,10 @@ import Section from '../../components/Section.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import Signal from '../../components/Signal.astro';
 import Avatar from '../../components/Avatar.astro';
+import EmailActions from '../../components/EmailActions.astro';
 import { localeParams, localePath, t, type Lang } from '../../i18n';
 import { profile } from '../../data/profile';
-import { research } from '../../data/research';
+import { research, publications } from '../../data/research';
 import { getProjects, getPosts, formatDate, readingTime } from '../../lib/content';
 
 export const getStaticPaths = localeParams;
@@ -18,51 +19,82 @@ const projects = await getProjects(lang);
 const featured = projects.filter((p) => p.data.featured).slice(0, 3);
 const cta = projects.length > 0 ? { href: '/projects', label: ui.nav.projects } : { href: '/about', label: ui.nav.about };
 const recentPosts = (await getPosts(lang)).slice(0, 3);
-const interests = research.interests.map((i) => i.title[lang]).filter(Boolean);
 const { thesis } = research;
+const hasThesis = Boolean(thesis.title[lang]);
+// Tez ya da yayın yoksa araştırma sayfasında yalnızca ilgi alanları vardır; bağlantı onu söylesin
+const researchLink =
+  hasThesis || publications.length > 0
+    ? { href: localePath(lang, '/research'), label: ui.researchMore }
+    : { href: localePath(lang, '/research#interests'), label: ui.researchInterests };
+
+// Görünen bölümler sırayla numaralanır (boş bölüm numara almaz)
+let n = 0;
+const next = () => String(++n).padStart(2, '0');
+const num = {
+  featured: featured.length > 0 ? next() : undefined,
+  research: next(),
+  writing: recentPosts.length > 0 ? next() : undefined,
+  contact: next(),
+};
 ---
 
 <Base lang={lang}>
   <section class="hero">
     <div class="hero-text">
-    {interests.length > 0 && <p class="mono accent">{interests.join(' / ')}</p>}
-    <h1>{profile.name}</h1>
-    {profile.role[lang] && <p class="role">{profile.role[lang]}</p>}
-    {profile.tagline[lang] && <p class="lead">{profile.tagline[lang]}</p>}
-    <div class="actions">
-      <a href={localePath(lang, cta.href)} class="btn btn-primary">{cta.label}</a>
-      {profile.cv[lang] && <a href={profile.cv[lang]} class="btn" download>{ui.downloadCv}</a>}
-    </div>
+      {
+        profile.now[lang] && (
+          <p class="status mono">
+            <span class="dot" aria-hidden="true" />
+            <span class="muted">{ui.now}:</span> {profile.now[lang]}
+          </p>
+        )
+      }
+      <h1>{profile.name}</h1>
+      {profile.role[lang] && <p class="role">{profile.role[lang]}</p>}
+      {profile.tagline[lang] && <p class="lead">{profile.tagline[lang]}</p>}
+      <div class="actions">
+        <a href={localePath(lang, cta.href)} class="btn btn-primary">{cta.label}</a>
+        {profile.cv[lang] && <a href={profile.cv[lang]} class="btn" download>{ui.downloadCv}</a>}
+      </div>
     </div>
     <div class="hero-avatar"><Avatar lang={lang} eager /></div>
   </section>
 
-  <Signal />
+  <Signal lang={lang} />
 
   <Section
     id="featured"
     title={ui.featured}
     filled={featured.length > 0}
     more={{ href: localePath(lang, '/projects'), label: ui.allProjects }}
-    flush
+    num={num.featured}
   >
     <div class="grid-cards">
       {featured.map((p) => <ProjectCard lang={lang} slug={p.slug} {...p.data} />)}
     </div>
   </Section>
 
-  <section class="section research" aria-labelledby="research-title">
+  <section class:list={['section research', { 'has-thesis': hasThesis }]} aria-labelledby="research-title">
     <div class="research-text">
-      <h2 id="research-title" class="h2">{ui.nav.research}</h2>
+      <h2 id="research-title" class="h2">
+        <span class="num" aria-hidden="true">{num.research}</span>
+        {ui.nav.research}
+      </h2>
       {research.summary[lang] && <p class="lead">{research.summary[lang]}</p>}
-      <a href={localePath(lang, '/research')} class="link-arrow">{ui.researchMore} →</a>
+      <a href={researchLink.href} class="link-arrow">
+        {researchLink.label} <span class="arrow" aria-hidden="true">→</span>
+      </a>
     </div>
     {
-      thesis.title[lang] && (
+      hasThesis && (
         <div class="card thesis">
           <span class="mono accent">{ui.thesisOngoing}</span>
           <span class="thesis-title">{thesis.title[lang]}</span>
-          {thesis.advisor && <span class="muted">{ui.advisor}: {thesis.advisor}</span>}
+          {thesis.advisor && (
+            <span class="muted">
+              {ui.advisor}: {thesis.advisor}
+            </span>
+          )}
         </div>
       )
     }
@@ -73,6 +105,7 @@ const { thesis } = research;
     title={ui.recentPosts}
     filled={recentPosts.length > 0}
     more={{ href: localePath(lang, '/writing'), label: ui.allPosts }}
+    num={num.writing}
   >
     <ul class="posts">
       {
@@ -89,17 +122,20 @@ const { thesis } = research;
   </Section>
 
   <section class="card contact" aria-labelledby="contact-title">
-    <div>
-      <h2 id="contact-title" class="h2">{ui.contact}</h2>
+    <div class="contact-text">
+      <h2 id="contact-title" class="h2">
+        <span class="num" aria-hidden="true">{num.contact}</span>
+        {ui.contact}
+      </h2>
       {profile.contactNote[lang] && <p>{profile.contactNote[lang]}</p>}
     </div>
-    <a href={localePath(lang, '/about#contact')} class="btn btn-primary">{ui.contactCta}</a>
+    <EmailActions lang={lang} />
   </section>
 </Base>
 
 <style>
   .hero {
-    padding: clamp(40px, 8vw, 80px) 0 24px;
+    padding: clamp(32px, 7vw, 72px) 0 8px;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(220px, 340px);
     align-items: center;
@@ -108,20 +144,52 @@ const { thesis } = research;
   .hero-text {
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 26px;
     min-width: 0;
   }
   @media (max-width: 760px) {
     .hero {
       grid-template-columns: minmax(0, 1fr);
+      gap: 32px;
     }
     .hero-avatar {
       order: -1;
-      width: min(220px, 60%);
+      width: min(200px, 56%);
     }
   }
-  .hero .mono {
+  .status {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 8px;
     font-size: 14px;
+    color: var(--tx2);
+  }
+  /* Canlı sinyal noktası: hafifçe nabız atar */
+  .dot {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ac);
+    box-shadow: 0 0 10px color-mix(in oklab, var(--ac) 70%, transparent);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .dot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: var(--ac);
+      animation: ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+  }
+  @keyframes ping {
+    70%,
+    100% {
+      transform: scale(2.6);
+      opacity: 0;
+    }
   }
   h1 {
     font-size: clamp(56px, 9vw, 120px);
@@ -140,17 +208,18 @@ const { thesis } = research;
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 8px;
-  }
-  .research {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
-    gap: 48px;
+    margin-top: 4px;
   }
   .research-text {
     display: flex;
     flex-direction: column;
     gap: 18px;
+    max-width: 62ch;
+  }
+  .research.has-thesis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: 48px;
   }
   .thesis {
     padding: 28px;
@@ -185,20 +254,23 @@ const { thesis } = research;
     text-decoration: none;
     font-size: 20px;
     font-weight: 500;
+    transition: color 0.2s;
+  }
+  .posts a:hover {
+    color: var(--ac);
   }
   .contact {
-    margin: 72px 0;
+    margin: 8px 0 72px;
     padding: clamp(28px, 5vw, 56px);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+    align-items: end;
+    gap: 32px 48px;
   }
-  .contact div {
+  .contact-text {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
     max-width: 48ch;
   }
   .contact p {

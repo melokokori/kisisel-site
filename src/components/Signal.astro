@@ -1,21 +1,90 @@
 ---
-// Ana sayfadaki imza çizgisi: düz bir hatta iki kısa sinyal.
+// Ana sayfadaki imza çizgisi: her ilgi alanı bir sinyal tepesi. Tepeye ya da etiketine
+// gelince o kesit parlar; tıklayınca araştırma sayfasındaki ilgili karta gider.
+import { localePath, type Lang } from '../i18n';
+import { research } from '../data/research';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const interests = research.interests.filter((i) => i.title[lang]);
+const count = Math.max(interests.length, 3);
+
+// 400×120'lik bir kesit: düz hat, küçük bir dalgalanma, tepe, yine dalgalanma.
+// Her kesitin genliği biraz farklı, böylece çizgi kopyala-yapıştır gibi görünmez.
+const amps = [1, 0.8, 1.15, 0.9, 1.05];
+const segment = (amp: number) =>
+  [
+    [0, 0],
+    [60, 0],
+    [80, 2],
+    [100, -2],
+    [120, 0],
+    [170, 0],
+    [182, 20],
+    [194, -32],
+    [208, 42],
+    [222, -20],
+    [234, 0],
+    [280, 0],
+    [300, 3],
+    [320, -3],
+    [340, 0],
+    [400, 0],
+  ]
+    .map(([x, dy]) => `${x},${60 - dy * amp}`)
+    .join(' ');
+
+const cols = Array.from({ length: count }, (_, i) => {
+  const interest = interests[i];
+  return {
+    points: segment(amps[i % amps.length]),
+    title: interest?.title[lang],
+    href: interest ? localePath(lang, `/research#interest-${i + 1}`) : undefined,
+  };
+});
 ---
 
-<svg viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
-  <line x1="0" y1="60" x2="1200" y2="60" class="base"></line>
-  <polyline
-    class="pulse"
-    points="0,60 120,60 150,58 170,62 200,60 320,60 340,40 352,92 366,22 380,78 392,60 520,60 540,56 560,64 580,60 700,60 716,30 728,96 742,12 756,84 770,60 900,60 930,57 960,63 990,60 1200,60"
-  ></polyline>
-</svg>
+<div class="signal" style={`--n: ${count}`}>
+  {
+    cols.map((c, i) => {
+      const Tag = c.href ? 'a' : 'div';
+      return (
+        <Tag class="col" href={c.href} style={`--i: ${i}`}>
+          <svg viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="0" y1="60" x2="400" y2="60" class="base" />
+            <polyline class="pulse" points={c.points} />
+          </svg>
+          {c.title && (
+            <span class="label">{c.title}</span>
+          )}
+        </Tag>
+      );
+    })
+  }
+</div>
 
 <style>
+  .signal {
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    margin: 32px 0 56px;
+  }
+  .col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: inherit;
+    text-decoration: none;
+  }
   svg {
     display: block;
     width: 100%;
-    height: clamp(64px, 10vw, 120px);
-    margin: 24px 0 72px;
+    height: clamp(56px, 9vw, 112px);
+    overflow: visible;
   }
   .base {
     stroke: var(--ln);
@@ -26,18 +95,60 @@
     fill: none;
     stroke: var(--ac);
     stroke-width: 1.5;
+    stroke-linejoin: round;
     vector-effect: non-scaling-stroke;
-    stroke-dasharray: 2400;
-    stroke-dashoffset: 0;
+    transition:
+      opacity 0.25s,
+      stroke-width 0.25s,
+      filter 0.25s;
   }
+  .label {
+    padding: 0 8px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.35;
+    color: var(--tx2);
+    transition: color 0.2s;
+  }
+
+  /* Üzerine gelinen kesit parlar, diğerleri geri çekilir */
+  .signal:has(a.col:hover, a.col:focus-visible) .col:not(:hover, :focus-visible) .pulse {
+    opacity: 0.35;
+  }
+  a.col:is(:hover, :focus-visible) .pulse {
+    stroke-width: 2.25;
+    filter: var(--glow-line);
+  }
+  a.col:is(:hover, :focus-visible) .label {
+    color: var(--ac);
+  }
+  a.col:focus-visible {
+    outline-offset: 6px;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
+    /* Kesitler soldan sağa sırayla taranır; tek bir kesintisiz sinyal gibi görünür */
     .pulse {
-      animation: draw 1.6s ease-out both;
+      animation: sweep 0.55s linear both;
+      animation-delay: calc(var(--i) * 0.55s + 0.15s);
+    }
+    .label {
+      animation: fade 0.5s ease-out both;
+      animation-delay: calc(var(--i) * 0.55s + 0.45s);
     }
   }
-  @keyframes draw {
+  @keyframes sweep {
     from {
-      stroke-dashoffset: 2400;
+      clip-path: inset(-50% 100% -50% 0);
+    }
+    to {
+      clip-path: inset(-50% 0 -50% 0);
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
     }
   }
 </style>
