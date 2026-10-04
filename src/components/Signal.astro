@@ -137,6 +137,29 @@ const cols = Array.from({ length: count }, (_, i) => {
       animation-delay: calc(var(--i) * 0.55s + 0.45s);
     }
   }
+  /* Kaydırdıkça sinyal soldan sağa dalgalanır: her kesitin tepesi sırayla büyüyüp söner.
+     Taban çizgisi SVG'nin ortasında olduğu için dikey ölçek yalnızca tepeleri etkiler. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      svg {
+        animation: swell ease-in-out both;
+        animation-range: cover calc(45% + var(--i) * 8%) cover calc(75% + var(--i) * 8%);
+      }
+      /* Zaman çizelgesi ayrı kuralda: küçültücü bunu `animation` kısaltmasına katarsa
+         tarayıcı tüm bildirimi geçersiz sayıyor (üretimde dalgalanma kayboluyordu) */
+      .col > svg {
+        animation-timeline: --signal;
+      }
+    }
+  }
+  .signal {
+    view-timeline: --signal block;
+  }
+  @keyframes swell {
+    50% {
+      scale: 1 1.45;
+    }
+  }
   @keyframes sweep {
     from {
       clip-path: inset(-50% 100% -50% 0);

@@ -62,6 +62,9 @@ Toplanacaklar:
 - [x] A: mobil başlık, boşluklar, Hakkımda iki sütun (yapışkan künye), yanıltıcı bağlantı etiketi
 - [x] B: "şu an" satırı, ilgi alanlarını gösteren sinyal, bölüm numaraları, Luminol ışıması (adli bilimler göndermesi yok)
 - [x] C: JS'siz sayfa geçişleri, üzerine gelme efektleri, e-postayı kopyala, 404 sayfası
+- [x] Logo: "M" sinyal monogramı (başlık, favicon, iOS ikonu, paylaşım kartı)
+- [x] Ana sayfa parallax'ı (derinlik katmanları + kaydırmaya bağlı sinyal)
+- [ ] 2.5B portre (katmanlara ayrılmış portre) — isteğe bağlı deneme
 - [ ] D: başlıklarda ikinci (editoryal serif) yazı tipi — ayrı branch'te denenecek
 
 ### Faz 5 — Sürdürme

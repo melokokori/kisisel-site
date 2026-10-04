@@ -40,12 +40,15 @@ const num = {
 
 <Base lang={lang}>
   <section class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
     <div class="hero-text">
       {
         profile.now[lang] && (
           <p class="status mono">
             <span class="dot" aria-hidden="true" />
-            <span class="muted">{ui.now}:</span> {profile.now[lang]}
+            <span>
+              <span class="muted">{ui.now}:</span> {profile.now[lang]}
+            </span>
           </p>
         )
       }
@@ -135,6 +138,8 @@ const num = {
 
 <style>
   .hero {
+    position: relative;
+    isolation: isolate;
     padding: clamp(32px, 7vw, 72px) 0 8px;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(220px, 340px);
@@ -147,6 +152,72 @@ const num = {
     gap: 26px;
     min-width: 0;
   }
+  /* En arka katman: portrenin arkasında yoğunlaşan, kenarlara doğru sönen ölçüm ızgarası */
+  .hero-bg {
+    position: absolute;
+    z-index: -1;
+    top: -160px;
+    left: calc(-1 * var(--gutter));
+    right: calc(-1 * var(--gutter));
+    height: calc(100% + 280px);
+    background: radial-gradient(circle, color-mix(in oklab, var(--ln2) 60%, var(--mu)) 1px, transparent 1.6px) 0 0 / 28px
+      28px;
+    mask-image: radial-gradient(ellipse 50% 65% at 62% 42%, #000 25%, transparent 78%);
+    opacity: 0.9;
+    pointer-events: none;
+  }
+  @media (max-width: 760px) {
+    .hero-bg {
+      mask-image: radial-gradient(ellipse 80% 45% at 30% 22%, #000 15%, transparent 75%);
+    }
+  }
+
+  /* Parallax: kaydırırken katmanlar farklı hızda hareket eder. Tamamen CSS (kaydırma
+     zaman çizelgesi); desteklemeyen tarayıcıda ve hareket azaltma açıkken sayfa durağandır. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      .hero-bg,
+      .hero-text,
+      .hero-avatar {
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: scroll(root);
+        animation-range: 0 100vh;
+      }
+      .hero-bg {
+        animation-name: depth-far;
+      }
+      .hero-avatar {
+        animation-name: depth-mid;
+      }
+      /* Metin, sayfa ne kadar kaydı değil kendisi ekranın üstünden çıkarken söner;
+         böylece mobilde uzun hero okunurken soluklaşmaz */
+      .hero-text {
+        animation-name: depth-near;
+        animation-timeline: view();
+        animation-range: exit 0% exit 100%;
+      }
+    }
+  }
+  @keyframes depth-far {
+    to {
+      translate: 0 160px;
+    }
+  }
+  @keyframes depth-mid {
+    to {
+      translate: 0 64px;
+    }
+  }
+  @keyframes depth-near {
+    50% {
+      opacity: 1;
+    }
+    to {
+      translate: 0 -40px;
+      opacity: 0;
+    }
+  }
   @media (max-width: 760px) {
     .hero {
       grid-template-columns: minmax(0, 1fr);
@@ -158,16 +229,16 @@ const num = {
     }
   }
   .status {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 4px 8px;
+    gap: 10px;
     font-size: 14px;
     color: var(--tx2);
   }
   /* Canlı sinyal noktası: hafifçe nabız atar */
   .dot {
     position: relative;
+    flex-shrink: 0;
     width: 8px;
     height: 8px;
     border-radius: 50%;

@@ -1,6 +1,7 @@
 ---
 import { localePath, t, type Lang } from '../i18n';
 import { getProjects, getPosts } from '../lib/content';
+import Logo from './Logo.astro';
 
 interface Props {
   lang: Lang;
@@ -23,7 +24,10 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
 ---
 
 <header class="site-header">
-  <a href={localePath(lang)} class="brand mono">melih.turgut</a>
+  <a href={localePath(lang)} class="brand">
+    <Logo size={30} />
+    <span class="mono">melih.turgut</span>
+  </a>
   <nav class="links" aria-label={ui.mainMenu}>
     {
       items.map((item) => (
@@ -70,10 +74,20 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
   }
   .brand {
     margin-right: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     font-size: 14px;
     color: var(--tx);
     text-decoration: none;
-    padding: 12px 0;
+    padding: 7px 0;
+  }
+  .brand :global(.logo) {
+    border-radius: 8px;
+    transition: box-shadow 0.25s;
+  }
+  .brand:hover :global(.logo) {
+    box-shadow: var(--glow);
   }
   .links,
   .tools {

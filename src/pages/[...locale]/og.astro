@@ -4,6 +4,7 @@ import '../../styles/global.css';
 import { localeParams, type Lang } from '../../i18n';
 import { profile } from '../../data/profile';
 import { research } from '../../data/research';
+import Logo from '../../components/Logo.astro';
 
 export const getStaticPaths = localeParams;
 
@@ -26,7 +27,7 @@ const interests = research.interests.map((i) => i.title[lang]).join(' / ');
         <h1>{profile.name}</h1>
         <p class="role">{profile.role[lang]}</p>
         <p class="tagline">{profile.tagline[lang]}</p>
-        <p class="mono host">{host}</p>
+        <p class="mono host"><Logo size={40} />{host}</p>
       </div>
       <svg viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true">
         <line x1="0" y1="40" x2="1200" y2="40" class="base"></line>
@@ -84,6 +85,9 @@ const interests = research.interests.map((i) => i.title[lang]).join(' / ');
   }
   .host {
     margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
     color: var(--tx);
   }
   img {
